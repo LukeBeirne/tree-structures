@@ -15,6 +15,15 @@ struct node;
 typedef struct node node_t;
 
 
+
+/*
+ * node struct function definitions
+ */
+
+//static function definitions in tree.c
+
+
+
 /*
  * tree struct function definitions
  */
@@ -22,23 +31,19 @@ typedef struct node node_t;
 tree_t *create_tree();
 void destroy_tree(tree_t *a);
 
-void insert_node(tree_t *a, node_t *b);
-void remove_node(tree_t *a, node_t *b);
+void insert_node(tree_t *a, int value);
+void remove_node(tree_t *a, int value);
 
+//returns true if input tree is NULL
 bool tree_empty(tree_t *a);
+
 int tree_depth(tree_t *a);
-bool tree_node_present(tree_t *a, node_t *b);
+
+//returns false if input tree is NULL
+bool tree_node_present(tree_t *a, int value);
+
 //void tree_traversals(tree_t *a, traversal type);
 //1, 2, or 3 for traversal type?
-
-
-
-/*
- * node struct function definitions
- */
- 
-node_t *create_node();
-void destroy_node(node_t *a);
 
 
 

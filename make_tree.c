@@ -31,12 +31,12 @@ int main(int argc, char *argv[]) {
 	}
 	*/
 	int value = 18;
-	node_t *root = create_node(value);
 	
-	tree_t *tree = create_tree(root);
+	tree_t *tree = create_tree(value);
+	
+	//stuff
 	
 	destroy_tree(tree);
-	destroy_node(root);
 	
 	return(0);
 }
