@@ -37,6 +37,7 @@ void remove_node(tree_t *a, int value);
 //returns true if input tree is NULL
 bool tree_empty(tree_t *a);
 
+//returns 0 if input tree is NULL
 int tree_depth(tree_t *a);
 
 //returns false if input tree is NULL
