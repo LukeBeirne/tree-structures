@@ -33,12 +33,19 @@ static node_t *create_node(int value) {
 	return node;
 }
 
-static void destroy_node(node_t *a) {
-	if(a == NULL) {
+static void destroy_node(node_t *node) {
+	if(node == NULL) {
 		return;
 	}
 	
-	free(a);
+	if(node->child1 != NULL) {
+		destroy_node(node->child1);
+	}
+	if(node->child2 != NULL) {
+		destroy_node(node->child2);
+	}
+	
+	free(node);
 }
 
 
@@ -55,15 +62,15 @@ tree_t *create_tree(int rootValue) {
 	return tree;
 }
 
-void destroy_tree(tree_t *a) {
-	if(a == NULL) {
+void destroy_tree(tree_t *tree) {
+	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
 	}
 	
 	//traverse tree to free each node?
-	free(a->root);
-	free(a);
+	destroy_node(tree->root);
+	free(tree);
 }
 
 /*
@@ -148,7 +155,7 @@ void remove_node(tree_t *tree, int value) {
 	}
 	
 	if((tree->root)->value == value) {
-		if((tree->root)->child1 =! NULL || (tree->root)->child2 =! NULL) {
+		if((tree->root)->child1 != NULL || (tree->root)->child2 != NULL) {
 			//free other children
 		}
 		free(tree->root);
@@ -164,7 +171,7 @@ bool tree_empty(tree_t *tree) {
 		return true;
 	}
 	
-	if((tree->root)->child1 == NULL && (tree->root)->child2 == NULL) {
+	if(tree->root == NULL) {
 		return true;
 	}
 	
@@ -177,7 +184,7 @@ bool tree_empty(tree_t *tree) {
  * https://www.baeldung.com/cs/binary-tree-height#:~:text=A%20similar%20concept%20in%20a,the%20most%20distant%20leaf%20node.
  */
 
-static void tree_depth_impl(node_t *node) {
+static int tree_depth_impl(node_t *node) {
 	if(node == NULL) {
 		return 0;
 	}

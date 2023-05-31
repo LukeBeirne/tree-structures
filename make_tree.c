@@ -34,7 +34,24 @@ int main(int argc, char *argv[]) {
 	
 	tree_t *tree = create_tree(value);
 	
-	//stuff
+	bool empty = tree_empty(tree);
+	if(empty) {
+		printf("The tree is empty\n");
+	}
+	else {
+		printf("The tree is not empty\n");
+	}
+	
+	int depth = tree_depth(tree);
+	printf("Tree depth is %d\n", depth);
+	
+	int insertvalue = 17;
+	printf("Inserting value %d into tree...\n", insertvalue);
+	insert_node(tree, insertvalue);
+	
+	depth = tree_depth(tree);
+	printf("Tree depth is %d\n", depth);
+	
 	
 	destroy_tree(tree);
 	
