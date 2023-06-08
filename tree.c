@@ -10,7 +10,9 @@
 
 struct tree {
 	node_t *root;
-	//int depth;
+	int depth;
+	int num_elements;
+	compare_func compare_fp;
 };
 
 struct node {
@@ -54,11 +56,12 @@ static void destroy_node(node_t *node) {
  * tree struct function definitions
  */
 
-tree_t *create_tree(int rootValue) {
+tree_t *create_tree(int rootValue, compare_func c_func) {
 	tree_t *tree = (tree_t *)malloc(sizeof(tree_t));
-	node_t *root = create_node(rootValue);
-	tree->root = root;
+	tree->root = create_node(rootValue);
 	//tree->depth = 1;
+	tree->num_elements = 1;
+	tree->compare_fp = c_func;
 	return tree;
 }
 
@@ -68,85 +71,109 @@ void destroy_tree(tree_t *tree) {
 		return;
 	}
 	
-	//traverse tree to free each node?
+	//destroy_node function traverses through tree to destroy each node
 	destroy_node(tree->root);
 	free(tree);
 }
 
 /*
-static void insert_node_impl(node_t *a, int value) {
-	int nodeval = a->value;
+ * tree traversal functions
+ *
+ * Notes about this section of functions:
+ * I had noticed that some of the functions were
+ * effectively traversing the given tree in the exact
+ * same way, the only difference between the functions
+ * is what they do when they reach the correct node
+ *
+ * The current tree functions that do this are:
+ * insert_node, remove_node, tree_node_present and once
+ * the print_tree function is implemented it will incorporate
+ * all three traversal methods, so it is also included
+ *
+ * Because of this observation, my idea was to have
+ * a collection of functions that would traverse through
+ * a given tree whether it be inorder, preorder, or postorder
+ * and upon arriving at the correct node, perform the action
+ * of the input function, thereby eliminating the code duplication
+ * present in the other tree functions
+ */
+void tree_inorder(traversal_func t_func) {
+	//inorder traversal
+	return;
+}
+void tree_preorder(traversal_func t_func) {
+	//preorder traversal
+	return;
+}
+void tree_postorder(traversal_func t_func) {
+	//postorder traversal
+	return;
+}
+
+
+static node_t *insert_node_impl(node_t *check, int value) {
+	if(check == NULL) {
+		return create_node(value);
+	}
+	
+	
+	int nodeval = check->value;
 	
 	if(nodeval == value) {
 		printf("node values are equivalent\n");
-		return;
 	}
 	
-	if(nodeval < value) {
+	if(value < nodeval) {
 		//left child
-		if(a->child1 == NULL) {
-			node_t *b = create_node(value);
-			a->child1 = b;
-			return;
-		}
-		insert_node_impl(a->child1, value);
+		check->child1 = insert_node_impl(check->child1, value);
 	}
 	
-	if(nodeval > value) {
+	if(value > nodeval) {
 		//right child
-		if(a->child2 == NULL) {
-			node_t *b = create_node(value);
-			a->child2 = b;
-			return;
-		}
-		insert_node_impl(a->child2, value);
+		check->child2 = insert_node_impl(check->child2, value);
 	}
+	
+	return check;
 }
-*/
 
-/*
- * was not sure if a recursive impl function
- * call was better than a while true statement
- * for the insert_node function
- */
+
 void insert_node(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
 	}
 	
-	node_t *node = tree->root;
-	int nodeval = node->value;
 	
-	//insert_node_impl(tree->root, value);
-	while(true) {
-		if(nodeval == value) {
-		printf("node values are equivalent\n");
-		//do something
-		return;
-		}
-	
-		if(nodeval < value) {
-			//left child
-			if(node->child1 == NULL) {
-				node_t *b = create_node(value);
-				node->child1 = b;
-				return;
-			}
-			node = node->child1;
-		}
-	
-		if(nodeval > value) {
-			//right child
-			if(node->child2 == NULL) {
-				node_t *b = create_node(value);
-				node->child2 = b;
-				return;
-			}
-			node = node->child2;
-		}
-	}
+	tree->root = insert_node_impl(tree->root, value);
+	tree->num_elements += 1;
 }
+
+
+static void remove_node_impl(node_t *check, int value) {
+	if(check == NULL) {
+		return;
+	}
+	
+	
+	int nodeval = check->value;
+	
+	if(nodeval == value) {
+		destroy_node(check);
+	}
+	
+	if(value < nodeval) {
+		//left child
+		remove_node_impl(check->child1, value);
+	}
+	
+	if(value > nodeval) {
+		//right child
+		remove_node_impl(check->child2, value);
+	}
+	
+	return;
+}
+
 
 void remove_node(tree_t *tree, int value) {
 	if(tree == NULL) {
@@ -154,15 +181,8 @@ void remove_node(tree_t *tree, int value) {
 		return;
 	}
 	
-	if((tree->root)->value == value) {
-		if((tree->root)->child1 != NULL || (tree->root)->child2 != NULL) {
-			//free other children
-		}
-		free(tree->root);
-		tree->root = NULL;
-		return;
-	}
-	//other stuff
+	remove_node_impl(tree->root, value);
+	return;
 }
 
 bool tree_empty(tree_t *tree) {
@@ -170,6 +190,7 @@ bool tree_empty(tree_t *tree) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return true;
 	}
+	
 	
 	if(tree->root == NULL) {
 		return true;
@@ -189,10 +210,11 @@ static int tree_depth_impl(node_t *node) {
 		return 0;
 	}
 	
+	
 	int left = tree_depth_impl(node->child1);
 	int right = tree_depth_impl(node->child2);
 	
-	if(left < right) {
+	if(left > right) {
 		return left + 1;
 	}
 	return right + 1;
@@ -214,11 +236,68 @@ int tree_depth(tree_t *tree) {
 		
 }
 
+
+int tree_get_num_elements(tree_t *tree) {
+	if(tree == NULL) {
+		fprintf(stderr, "Tree pointer is NULL\n");
+		return 0;
+	}
+	
+	
+	return tree->num_elements;
+}
+
+
+bool tree_node_present_impl(node_t *check, int value) {
+	int checkval = check->value;
+	
+	if(checkval == value) {
+		return true;
+	}
+	
+	if(value < checkval) {
+		if(check->child1 == NULL) {
+			return false;
+		}
+		return tree_node_present_impl(check->child1, value);
+	}
+	
+	if(check->child2 == NULL) {
+		return false;
+	}
+	return tree_node_present_impl(check->child2, value);
+}
+
 bool tree_node_present(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return false;
 	}
-	//some fancy calculation
-	return false;
+	
+	
+	return tree_node_present_impl(tree->root, value);
+}
+
+void print_tree(tree_t *tree, transversal_e transversal) {
+	if(tree == NULL) {
+		fprintf(stderr, "Tree pointer is NULL\n");
+		return;
+	}
+	
+	switch(transversal) {
+		case 0: //inorder
+			//function pointers?
+			printf("inorder\n");
+			break;
+		case 1: //preorder
+			
+			break;
+		case 2: //postorder
+			
+			break;
+		default: //invalid
+			fprintf(stderr, "Invalid transversal in print_tree function\n");
+			return;
+	}
+	
 }

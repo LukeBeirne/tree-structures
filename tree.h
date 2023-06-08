@@ -4,6 +4,13 @@
 #include <stdbool.h>
 
 
+typedef enum transversal {
+	inorder,
+	preorder,
+	postorder,
+	invalid
+} transversal_e;
+
 /*
  * struct definitions and typedefs
  */
@@ -22,6 +29,11 @@ typedef struct node node_t;
 
 //static function definitions in tree.c
 
+/*
+ * function pointer typedefs
+ */
+typedef void (*traversal_func)(void *);
+typedef void (*compare_func)(void *, void *);
 
 
 /*
@@ -29,39 +41,27 @@ typedef struct node node_t;
  */
 
 tree_t *create_tree();
-void destroy_tree(tree_t *a);
+void destroy_tree(tree_t *tree);
 
-void insert_node(tree_t *a, int value);
-void remove_node(tree_t *a, int value);
+//does nothing if inserted value already exists
+void insert_node(tree_t *tree, int value);
+
+void remove_node(tree_t *tree, int value);
 
 //returns true if input tree is NULL
-bool tree_empty(tree_t *a);
+bool tree_empty(tree_t *tree);
 
 //returns 0 if input tree is NULL
-int tree_depth(tree_t *a);
+int tree_depth(tree_t *tree);
+
+//returns 0 if input tree is NULL
+int tree_get_num_elements(tree_t *tree);
 
 //returns false if input tree is NULL
-bool tree_node_present(tree_t *a, int value);
+bool tree_node_present(tree_t *tree, int value);
 
-//void tree_traversals(tree_t *a, traversal type);
-//1, 2, or 3 for traversal type?
-
-
-
-/* unused book functions as references
-
-void print_book(book_t *a);
-
-void set_title(book_t *a, char *title);
-void set_id(book_t *a, int id);
-
-char *get_title(book_t *a);
-int get_id(book_t *a);
-
-void write_book(book_t *a, FILE *fn);
-book_t *read_book(FILE *fn);
-
-*/
+//inorder = 0, preorder = 1, postorder = 2, invalid = 3
+void print_tree(tree_t *tree, transversal_e transversal);
 
 
 #endif

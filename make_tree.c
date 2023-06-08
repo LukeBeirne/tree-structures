@@ -4,6 +4,16 @@
 #include <string.h>
 
 
+void print_empty(tree_t *tree) {
+	bool empty = tree_empty(tree);
+	if(empty) {
+		printf("The tree is empty\n");
+	}
+	else {
+		printf("The tree is not empty\n");
+	}
+}
+
 int main(int argc, char *argv[]) {
 	
 	/* saving switch case jic input parameters are needed
@@ -30,30 +40,40 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	*/
-	int value = 18;
+	
+	//random values assigned into tree nodes
+	//srand call to ensure random values stay the same
+	srand(50);
+	
+	
+	int value = rand() % 100;
 	
 	tree_t *tree = create_tree(value);
+	tree_t *emptytree = create_tree(NULL);
 	
-	bool empty = tree_empty(tree);
-	if(empty) {
-		printf("The tree is empty\n");
-	}
-	else {
-		printf("The tree is not empty\n");
-	}
+	print_empty(tree);
+	print_empty(emptytree);
 	
 	int depth = tree_depth(tree);
 	printf("Tree depth is %d\n", depth);
 	
-	int insertvalue = 17;
-	printf("Inserting value %d into tree...\n", insertvalue);
+	int insertvalue = rand() % 100;
+	printf("Inserting value %d into tree\n", insertvalue);
 	insert_node(tree, insertvalue);
 	
 	depth = tree_depth(tree);
 	printf("Tree depth is %d\n", depth);
 	
+	if(tree_node_present(tree, insertvalue)) {
+		printf("%d in tree\n", insertvalue);
+	}
+	else printf("%d not in tree\n", insertvalue);
+	
+	printf("%d elements in tree\n", tree_get_num_elements(tree));
+	
 	
 	destroy_tree(tree);
+	destroy_tree(emptytree);
 	
 	return(0);
 }
