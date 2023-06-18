@@ -8,8 +8,15 @@ typedef enum transversal {
 	inorder,
 	preorder,
 	postorder,
-	invalid
+	invalid_transversal
 } transversal_e;
+
+typedef enum tree_type {
+	binary,
+	avl,
+	heap,
+	invalid_tree
+} tree_e;
 
 /*
  * struct definitions and typedefs

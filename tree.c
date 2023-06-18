@@ -10,7 +10,7 @@
 
 struct tree {
 	node_t *root;
-	int depth;
+	tree_e type;
 	int num_elements;
 	compare_func compare_fp;
 };
@@ -35,6 +35,7 @@ static node_t *create_node(int value) {
 	return node;
 }
 
+
 static void destroy_node(node_t *node) {
 	if(node == NULL) {
 		return;
@@ -56,14 +57,16 @@ static void destroy_node(node_t *node) {
  * tree struct function definitions
  */
 
-tree_t *create_tree(int rootValue, compare_func c_func) {
+tree_t *create_tree(int rootValue, tree_e type, compare_func c_func) {
 	tree_t *tree = (tree_t *)malloc(sizeof(tree_t));
 	tree->root = create_node(rootValue);
 	//tree->depth = 1;
+	tree->type = type;
 	tree->num_elements = 1;
 	tree->compare_fp = c_func;
 	return tree;
 }
+
 
 void destroy_tree(tree_t *tree) {
 	if(tree == NULL) {
@@ -76,42 +79,8 @@ void destroy_tree(tree_t *tree) {
 	free(tree);
 }
 
-/*
- * tree traversal functions
- *
- * Notes about this section of functions:
- * I had noticed that some of the functions were
- * effectively traversing the given tree in the exact
- * same way, the only difference between the functions
- * is what they do when they reach the correct node
- *
- * The current tree functions that do this are:
- * insert_node, remove_node, tree_node_present and once
- * the print_tree function is implemented it will incorporate
- * all three traversal methods, so it is also included
- *
- * Because of this observation, my idea was to have
- * a collection of functions that would traverse through
- * a given tree whether it be inorder, preorder, or postorder
- * and upon arriving at the correct node, perform the action
- * of the input function, thereby eliminating the code duplication
- * present in the other tree functions
- */
-void tree_inorder(traversal_func t_func) {
-	//inorder traversal
-	return;
-}
-void tree_preorder(traversal_func t_func) {
-	//preorder traversal
-	return;
-}
-void tree_postorder(traversal_func t_func) {
-	//postorder traversal
-	return;
-}
 
-
-static node_t *insert_node_impl(node_t *check, int value) {
+static node_t *insert_node_impl(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return create_node(value);
 	}
@@ -120,22 +89,22 @@ static node_t *insert_node_impl(node_t *check, int value) {
 	int nodeval = check->value;
 	
 	if(nodeval == value) {
-		printf("node values are equivalent\n");
+		printf("Value %d already present in tree\n", value);
+		*present = true;
 	}
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = insert_node_impl(check->child1, value);
+		check->child1 = insert_node_impl(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = insert_node_impl(check->child2, value);
+		check->child2 = insert_node_impl(check->child2, value, present);
 	}
 	
 	return check;
 }
-
 
 void insert_node(tree_t *tree, int value) {
 	if(tree == NULL) {
@@ -143,37 +112,68 @@ void insert_node(tree_t *tree, int value) {
 		return;
 	}
 	
+	bool present = false;
+	tree->root = insert_node_impl(tree->root, value, &present);
 	
-	tree->root = insert_node_impl(tree->root, value);
-	tree->num_elements += 1;
+	if(!present) {
+		tree->num_elements += 1;
+	}
+	return;
 }
 
 
-static void remove_node_impl(node_t *check, int value) {
+static node_t *find_left_leaf(node_t *node) {
+	if(node == NULL) {
+		return NULL;
+	}
+	
+	if(node->child1 == NULL) {
+		return node;
+	} else return find_left_leaf(node->child1);
+	
+}
+
+static node_t *remove_node_impl(node_t *check, int value) {
 	if(check == NULL) {
-		return;
+		return NULL;
 	}
 	
 	
 	int nodeval = check->value;
 	
 	if(nodeval == value) {
-		destroy_node(check);
+		if(check->child1 == NULL && check->child2 == NULL) {
+			destroy_node(check);
+			return NULL;
+		} else if((check->child1 != NULL) ^ (check->child2 != NULL)) {
+			if(check->child1 != NULL) {
+				node_t *temp = check->child1;
+				destroy_node(check);
+				return temp;
+			} else {
+				node_t *temp = check->child2;
+				destroy_node(check);
+				return temp;
+			}
+		} else {
+			node_t *leaf = find_left_leaf(check->child2);
+			check->value = leaf->value;
+			return check;
+		}
 	}
 	
 	if(value < nodeval) {
 		//left child
-		remove_node_impl(check->child1, value);
+		check->child1 = remove_node_impl(check->child1, value);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		remove_node_impl(check->child2, value);
+		check->child2 = remove_node_impl(check->child2, value);
 	}
 	
-	return;
+	return check;
 }
-
 
 void remove_node(tree_t *tree, int value) {
 	if(tree == NULL) {
@@ -192,7 +192,7 @@ bool tree_empty(tree_t *tree) {
 	}
 	
 	
-	if(tree->root == NULL) {
+	if((tree->root)->value == 0 && (tree->root)->child1 == NULL && (tree->root)->child2 == NULL) {
 		return true;
 	}
 	
@@ -278,6 +278,25 @@ bool tree_node_present(tree_t *tree, int value) {
 	return tree_node_present_impl(tree->root, value);
 }
 
+
+void print_tree_preorder(node_t *node) {
+	if(node == NULL) {
+		printf("NULL\n");
+	}
+	
+	printf("%d\n", node->value);
+	
+	if(node->child1 != NULL) {
+		print_tree_preorder(node->child1);
+	}
+	
+	if(node->child2 != NULL) {
+		print_tree_preorder(node->child2);
+	}
+	
+	return;
+}
+
 void print_tree(tree_t *tree, transversal_e transversal) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
@@ -286,8 +305,7 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 	
 	switch(transversal) {
 		case 0: //inorder
-			//function pointers?
-			printf("inorder\n");
+			print_tree_preorder(tree->root);
 			break;
 		case 1: //preorder
 			
@@ -301,3 +319,43 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 	}
 	
 }
+
+
+
+
+
+
+/*
+ * tree traversal functions
+ *
+ * Notes about this section of functions:
+ * I had noticed that some of the functions were
+ * effectively traversing the given tree in the exact
+ * same way, the only difference between the functions
+ * is what they do when they reach the correct node
+ *
+ * The current tree functions that do this are:
+ * insert_node, remove_node, tree_node_present and once
+ * the print_tree function is implemented it will incorporate
+ * all three traversal methods, so it is also included
+ *
+ * Because of this observation, my idea was to have
+ * a collection of functions that would traverse through
+ * a given tree whether it be inorder, preorder, or postorder
+ * and upon arriving at the correct node, perform the action
+ * of the input function, thereby eliminating the code duplication
+ * present in the other tree functions
+
+void tree_inorder(traversal_func t_func) {
+	//inorder traversal
+	return;
+}
+void tree_preorder(traversal_func t_func) {
+	//preorder traversal
+	return;
+}
+void tree_postorder(traversal_func t_func) {
+	//postorder traversal
+	return;
+}
+*/
