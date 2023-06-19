@@ -133,7 +133,7 @@ static node_t *find_left_leaf(node_t *node) {
 	
 }
 
-static node_t *remove_node_impl(node_t *check, int value) {
+static node_t *remove_node_impl(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return NULL;
 	}
@@ -142,19 +142,29 @@ static node_t *remove_node_impl(node_t *check, int value) {
 	int nodeval = check->value;
 	
 	if(nodeval == value) {
+		*present = true;
+		//node to be removed has no children
 		if(check->child1 == NULL && check->child2 == NULL) {
 			destroy_node(check);
 			return NULL;
+		
+		//node to be removed has one child
 		} else if((check->child1 != NULL) ^ (check->child2 != NULL)) {
+			
+			//case for left child
 			if(check->child1 != NULL) {
 				node_t *temp = check->child1;
 				destroy_node(check);
 				return temp;
+				
+			//case for right child
 			} else {
 				node_t *temp = check->child2;
 				destroy_node(check);
 				return temp;
 			}
+			
+		//node to be removed has two children
 		} else {
 			node_t *leaf = find_left_leaf(check->child2);
 			check->value = leaf->value;
@@ -164,12 +174,12 @@ static node_t *remove_node_impl(node_t *check, int value) {
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = remove_node_impl(check->child1, value);
+		check->child1 = remove_node_impl(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = remove_node_impl(check->child2, value);
+		check->child2 = remove_node_impl(check->child2, value, present);
 	}
 	
 	return check;
@@ -181,7 +191,12 @@ void remove_node(tree_t *tree, int value) {
 		return;
 	}
 	
-	remove_node_impl(tree->root, value);
+	
+	bool present = false;
+	remove_node_impl(tree->root, value, &present);
+	if(present) {
+		tree->num_elements -= 1;
+	}
 	return;
 }
 
@@ -279,10 +294,30 @@ bool tree_node_present(tree_t *tree, int value) {
 }
 
 
+void print_tree_inorder(node_t *node) {
+	if(node == NULL) {
+		printf("NULL\n");
+	}
+	
+	
+	if(node->child1 != NULL) {
+		print_tree_inorder(node->child1);
+	}
+	
+	printf("%d\n", node->value);
+	
+	if(node->child2 != NULL) {
+		print_tree_inorder(node->child2);
+	}
+	
+	return;
+}
+
 void print_tree_preorder(node_t *node) {
 	if(node == NULL) {
 		printf("NULL\n");
 	}
+	
 	
 	printf("%d\n", node->value);
 	
@@ -297,6 +332,25 @@ void print_tree_preorder(node_t *node) {
 	return;
 }
 
+void print_tree_postorder(node_t *node) {
+	if(node == NULL) {
+		printf("NULL\n");
+	}
+	
+	
+	if(node->child1 != NULL) {
+		print_tree_postorder(node->child1);
+	}
+	
+	if(node->child2 != NULL) {
+		print_tree_postorder(node->child2);
+	}
+	
+	printf("%d\n", node->value);
+	
+	return;
+}
+
 void print_tree(tree_t *tree, transversal_e transversal) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
@@ -305,18 +359,20 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 	
 	switch(transversal) {
 		case 0: //inorder
-			print_tree_preorder(tree->root);
+			print_tree_inorder(tree->root);
 			break;
 		case 1: //preorder
-			
+			print_tree_preorder(tree->root);
 			break;
 		case 2: //postorder
-			
+			print_tree_postorder(tree->root);
 			break;
 		default: //invalid
 			fprintf(stderr, "Invalid transversal in print_tree function\n");
 			return;
 	}
+	
+	return;
 	
 }
 
@@ -346,15 +402,15 @@ void print_tree(tree_t *tree, transversal_e transversal) {
  * of the input function, thereby eliminating the code duplication
  * present in the other tree functions
 
-void tree_inorder(traversal_func t_func) {
+void tree_inorder(tree_t *tree, traversal_func t_func) {
 	//inorder traversal
 	return;
 }
-void tree_preorder(traversal_func t_func) {
+void tree_preorder(tree_t *tree, traversal_func t_func) {
 	//preorder traversal
 	return;
 }
-void tree_postorder(traversal_func t_func) {
+void tree_postorder(tree_t *tree, traversal_func t_func) {
 	//postorder traversal
 	return;
 }

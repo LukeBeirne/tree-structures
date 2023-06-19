@@ -3,17 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 
-
-void print_empty(tree_t *tree) {
-	bool empty = tree_empty(tree);
-	if(empty) {
-		printf("The tree is empty\n");
-	}
-	else {
-		printf("The tree is not empty\n");
-	}
-}
-
 int main(int argc, char *argv[]) {
 	
 	/* saving switch case jic input parameters are needed
@@ -43,7 +32,8 @@ int main(int argc, char *argv[]) {
 	
 	//random values assigned into tree nodes
 	//srand call to ensure random values stay the same
-	srand(50);
+	//srand(50) returns increasing values with 1 repeat
+	srand(100);
 	int upbound = 100;
 	
 	int value = rand() % upbound;
@@ -59,8 +49,19 @@ int main(int argc, char *argv[]) {
 	print_tree(emptytree, 0);
 	
 	//test emptiness
-	print_empty(tree);
-	print_empty(emptytree);
+	if(tree_empty(tree)) {
+		printf("The tree is empty\n");
+	}
+	else {
+		printf("The tree is not empty\n");
+	}
+	
+	if(tree_empty(emptytree)) {
+		printf("The tree is empty\n");
+	}
+	else {
+		printf("The tree is not empty\n");
+	}
 	
 	//test depth
 	printf("Tree depth is %d\n", tree_depth(tree));
@@ -84,8 +85,15 @@ int main(int argc, char *argv[]) {
 		insert_node(tree, insertvalue);
 	}
 	
-	//print new tree
+	//print new tree with various orders
+	printf("Tree contents inorder:\n");
 	print_tree(tree, 0);
+	
+	printf("Tree contents preorder:\n");
+	print_tree(tree, 1);
+	
+	printf("Tree contents postorder:\n");
+	print_tree(tree, 2);
 	
 	//test new depth
 	printf("Tree depth is %d\n", tree_depth(tree));
@@ -99,7 +107,26 @@ int main(int argc, char *argv[]) {
 	}
 	else printf("Value %d not present in tree\n", insertvalue);
 	
+	//test removing value
+	int removevalue = 84;
+	printf("Removing value %d from tree\n", removevalue);
+	remove_node(tree, removevalue);
 	
+	//re-print tree
+	printf("Tree contents inorder:\n");
+	print_tree(tree, 0);
+	
+	printf("Tree contents preorder:\n");
+	print_tree(tree, 1);
+	
+	printf("Tree contents postorder:\n");
+	print_tree(tree, 2);
+	
+	//test new depth
+	printf("Tree depth is %d\n", tree_depth(tree));
+	
+	//test new num elements
+	printf("%d elements in tree\n", tree_get_num_elements(tree));
 	
 	
 	//destroy trees and end
