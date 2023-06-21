@@ -90,13 +90,13 @@ int main(int argc, char *argv[]) {
 	
 	//print new tree with various orders
 	printf("Tree contents inorder:\n");
-	print_tree(tree, 0);
+	print_tree(tree, inorder);
 	
 	printf("Tree contents preorder:\n");
-	print_tree(tree, 1);
+	print_tree(tree, preorder);
 	
 	printf("Tree contents postorder:\n");
-	print_tree(tree, 2);
+	print_tree(tree, postorder);
 	
 	//test new depth
 	printf("Tree depth is %d\n", tree_depth(tree));
@@ -117,13 +117,13 @@ int main(int argc, char *argv[]) {
 	
 	//re-print tree
 	printf("Tree contents inorder:\n");
-	print_tree(tree, 0);
+	print_tree(tree, inorder);
 	
 	printf("Tree contents preorder:\n");
-	print_tree(tree, 1);
+	print_tree(tree, preorder);
 	
 	printf("Tree contents postorder:\n");
-	print_tree(tree, 2);
+	print_tree(tree, postorder);
 	
 	//test new depth
 	printf("Tree depth is %d\n", tree_depth(tree));

@@ -7,7 +7,6 @@
 	(t) >= inorder && (t) < invalid_transversal
 
 /*
-modify create_tree
 change int parameters to name
 try heap
 */
