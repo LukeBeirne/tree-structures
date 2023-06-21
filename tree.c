@@ -3,6 +3,15 @@
 #include <string.h>
 #include "tree.h"
 
+#define valid_tree_type(t) \
+	(t) >= inorder && (t) < invalid_transversal
+
+/*
+modify create_tree
+change int parameters to name
+try heap
+*/
+
 
 /*
  * struct definitions and typedefs
@@ -60,6 +69,7 @@ static void destroy_node(node_t *node) {
 tree_t *create_tree(int rootValue, tree_e type, compare_func c_func) {
 	tree_t *tree = (tree_t *)malloc(sizeof(tree_t));
 	tree->root = create_node(rootValue);
+	//make root NULL to begin with
 	//tree->depth = 1;
 	tree->type = type;
 	tree->num_elements = 1;
@@ -168,6 +178,7 @@ static node_t *remove_node_impl(node_t *check, int value, bool *present) {
 		} else {
 			node_t *leaf = find_left_leaf(check->child2);
 			check->value = leaf->value;
+			check->child2 = remove_node_impl(check->child2, check->value, present);
 			return check;
 		}
 	}
@@ -193,7 +204,7 @@ void remove_node(tree_t *tree, int value) {
 	
 	
 	bool present = false;
-	remove_node_impl(tree->root, value, &present);
+	tree->root = remove_node_impl(tree->root, value, &present);
 	if(present) {
 		tree->num_elements -= 1;
 	}
@@ -354,6 +365,11 @@ void print_tree_postorder(node_t *node) {
 void print_tree(tree_t *tree, transversal_e transversal) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
+		return;
+	}
+	
+	if(!(valid_tree_type(transversal))) {
+		fprintf(stderr, "Invalid transversal in print_tree function\n");
 		return;
 	}
 	

@@ -40,14 +40,20 @@ typedef struct node node_t;
  * function pointer typedefs
  */
 typedef void (*traversal_func)(void *);
-typedef void (*compare_func)(void *, void *);
+
+/* compare func return values:
+-1 for first input < second input
+0 for equal
+1 for first input > second input
+*/
+typedef int (*compare_func)(void *, void *);
 
 
 /*
  * tree struct function definitions
  */
 
-tree_t *create_tree();
+tree_t *create_tree(int value, tree_e type, compare_func cp_f);
 void destroy_tree(tree_t *tree);
 
 //does nothing if inserted value already exists

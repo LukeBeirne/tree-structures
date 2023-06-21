@@ -41,12 +41,12 @@ int main(int argc, char *argv[]) {
 	
 	//creating trees
 	printf("Creating tree with %d as root\n", value);
-	tree_t *tree = create_tree(value, 0, NULL);
-	tree_t *emptytree = create_tree(NULL, 0, NULL);
+	tree_t *tree = create_tree(value, binary, NULL);
+	tree_t *emptytree = create_tree(0, binary, NULL);
 	
 	//print trees with only root value
-	print_tree(tree, 0);
-	print_tree(emptytree, 0);
+	print_tree(tree, inorder);
+	print_tree(emptytree, inorder);
 	
 	//test emptiness
 	if(tree_empty(tree)) {
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 	else printf("Value %d not present in tree\n", insertvalue);
 	
 	//test removing value
-	int removevalue = 84;
+	int removevalue = 40;
 	printf("Removing value %d from tree\n", removevalue);
 	remove_node(tree, removevalue);
 	
@@ -127,7 +127,6 @@ int main(int argc, char *argv[]) {
 	
 	//test new num elements
 	printf("%d elements in tree\n", tree_get_num_elements(tree));
-	
 	
 	//destroy trees and end
 	destroy_tree(tree);
