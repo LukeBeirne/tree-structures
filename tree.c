@@ -66,13 +66,12 @@ static void destroy_node(node_t *node) {
  * tree struct function definitions
  */
 
-tree_t *create_tree(int rootValue, tree_e type, compare_func c_func) {
+tree_t *create_tree(tree_e type, compare_func c_func) {
 	tree_t *tree = (tree_t *)malloc(sizeof(tree_t));
-	tree->root = create_node(rootValue);
-	//make root NULL to begin with
+	tree->root = NULL;
 	//tree->depth = 1;
 	tree->type = type;
-	tree->num_elements = 1;
+	tree->num_elements = 0;
 	tree->compare_fp = c_func;
 	return tree;
 }
@@ -122,6 +121,14 @@ void insert_node(tree_t *tree, int value) {
 		return;
 	}
 	
+	//case where tree is empty, value inserted as root
+	if(tree->root == NULL) {
+		tree->root = create_node(value);
+		tree->num_elements += 1;
+		return;
+	}
+	
+	//case where tree is not empty, value inserted where appropriate
 	bool present = false;
 	tree->root = insert_node_impl(tree->root, value, &present);
 	
@@ -218,7 +225,7 @@ bool tree_empty(tree_t *tree) {
 	}
 	
 	
-	if((tree->root)->value == 0 && (tree->root)->child1 == NULL && (tree->root)->child2 == NULL) {
+	if(tree->root == NULL) {
 		return true;
 	}
 	
@@ -301,6 +308,11 @@ bool tree_node_present(tree_t *tree, int value) {
 	}
 	
 	
+	//case where tree is empty
+	if(tree->root == NULL) {
+		return false;
+	}
+	
 	return tree_node_present_impl(tree->root, value);
 }
 
@@ -368,8 +380,15 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 		return;
 	}
 	
+	//check for valid transversal type
 	if(!(valid_tree_type(transversal))) {
 		fprintf(stderr, "Invalid transversal in print_tree function\n");
+		return;
+	}
+	
+	//check for empty tree
+	if(tree->root == NULL) {
+		printf("NULL\n");
 		return;
 	}
 	

@@ -53,7 +53,7 @@ typedef int (*compare_func)(void *, void *);
  * tree struct function definitions
  */
 
-tree_t *create_tree(int value, tree_e type, compare_func cp_f);
+tree_t *create_tree(tree_e type, compare_func cp_f);
 void destroy_tree(tree_t *tree);
 
 //does nothing if inserted value already exists
@@ -74,6 +74,7 @@ int tree_get_num_elements(tree_t *tree);
 bool tree_node_present(tree_t *tree, int value);
 
 //inorder = 0, preorder = 1, postorder = 2, invalid = 3
+//prints "NULL" if tree is empty and returns
 void print_tree(tree_t *tree, transversal_e transversal);
 
 

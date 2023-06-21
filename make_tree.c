@@ -41,8 +41,11 @@ int main(int argc, char *argv[]) {
 	
 	//creating trees
 	printf("Creating tree with %d as root\n", value);
-	tree_t *tree = create_tree(value, binary, NULL);
-	tree_t *emptytree = create_tree(0, binary, NULL);
+	tree_t *tree = create_tree(binary, NULL);
+	tree_t *emptytree = create_tree(binary, NULL);
+	
+	//insert root into tree
+	insert_node(tree, value);
 	
 	//print trees with only root value
 	print_tree(tree, inorder);
