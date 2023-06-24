@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
+#include "heap.h"
 
 #define valid_tree_type(t) \
 	(t) >= inorder && (t) < invalid_transversal
 
 /*
-change int parameters to name
 try heap
 */
 
@@ -119,6 +119,14 @@ void insert_node(tree_t *tree, int value) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
 	}
+	
+	
+	//heap tree
+	if(tree->type == heap) {
+		heap_insert_node(tree, value);
+		return;
+	}
+	
 	
 	//case where tree is empty, value inserted as root
 	if(tree->root == NULL) {

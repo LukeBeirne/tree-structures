@@ -31,7 +31,7 @@ typedef struct node node_t;
 
 
 /*
- * node struct function definitions
+ * node struct function declarations
  */
 
 //static function definitions in tree.c
@@ -50,7 +50,7 @@ typedef int (*compare_func)(void *, void *);
 
 
 /*
- * tree struct function definitions
+ * tree struct function declarations
  */
 
 tree_t *create_tree(tree_e type, compare_func cp_f);
