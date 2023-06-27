@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
-#include "heap.h"
 
 #define valid_tree_type(t) \
 	(t) >= inorder && (t) < invalid_transversal
@@ -20,6 +19,7 @@ struct tree {
 	node_t *root;
 	tree_e type;
 	int num_elements;
+	int *heap_array;
 	compare_func compare_fp;
 };
 
@@ -68,8 +68,12 @@ static void destroy_node(node_t *node) {
 tree_t *create_tree(tree_e type, compare_func c_func) {
 	tree_t *tree = (tree_t *)malloc(sizeof(tree_t));
 	tree->root = NULL;
-	//tree->depth = 1;
 	tree->type = type;
+	/*
+	if(tree->type == heap) {
+		tree->heap_array = (int *)malloc(x*sizeof(int));
+	}
+	*/
 	tree->num_elements = 0;
 	tree->compare_fp = c_func;
 	return tree;
@@ -87,6 +91,26 @@ void destroy_tree(tree_t *tree) {
 	free(tree);
 }
 
+
+
+/*
+ * heap tree function definitions
+ */
+ 
+ static void heap_insert_node_impl(node_t *check, int value) {
+	return;
+}
+
+static void heap_insert_node(tree_t *tree, int value) {
+	heap_insert_node_impl(tree->root, value);
+	return;
+}
+
+
+
+/*
+ * binary tree function definitions
+ */
 
 static node_t *insert_node_impl(node_t *check, int value, bool *present) {
 	if(check == NULL) {
@@ -121,17 +145,16 @@ void insert_node(tree_t *tree, int value) {
 	}
 	
 	
-	//heap tree
-	if(tree->type == heap) {
-		heap_insert_node(tree, value);
-		return;
-	}
-	
-	
 	//case where tree is empty, value inserted as root
 	if(tree->root == NULL) {
 		tree->root = create_node(value);
 		tree->num_elements += 1;
+		return;
+	}
+	
+	//heap tree
+	if(tree->type == heap) {
+		heap_insert_node(tree, value);
 		return;
 	}
 	
@@ -417,6 +440,9 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 	return;
 	
 }
+
+
+
 
 
 
