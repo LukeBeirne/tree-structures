@@ -2,26 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
+#include "heap.h"
 
 #define valid_tree_type(t) \
 	(t) >= inorder && (t) < invalid_transversal
+
+
 
 /*
 try heap
 */
 
 
+
 /*
  * struct definitions and typedefs
  */
-
-struct tree {
-	node_t *root;
-	tree_e type;
-	int num_elements;
-	int *heap_array;
-	compare_func compare_fp;
-};
 
 struct node {
 	int value;
@@ -65,17 +61,14 @@ static void destroy_node(node_t *node) {
  * tree struct function definitions
  */
 
-tree_t *create_tree(tree_e type, compare_func c_func) {
-	tree_t *tree = (tree_t *)malloc(sizeof(tree_t));
-	tree->root = NULL;
-	tree->type = type;
-	/*
-	if(tree->type == heap) {
-		tree->heap_array = (int *)malloc(x*sizeof(int));
-	}
-	*/
-	tree->num_elements = 0;
+tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
+	tree_t *tree = (tree_t *)calloc(1, sizeof(tree_t));
 	tree->compare_fp = c_func;
+	tree->type = type;
+	if(tree->type == heap) {
+		tree->heap_array = (int *)malloc(heap_size*sizeof(int));
+		tree->heap_size = heap_size;
+	}
 	return tree;
 }
 
@@ -86,24 +79,24 @@ void destroy_tree(tree_t *tree) {
 		return;
 	}
 	
-	//destroy_node function traverses through tree to destroy each node
-	destroy_node(tree->root);
-	free(tree);
-}
-
-
-
-/*
- * heap tree function definitions
- */
- 
- static void heap_insert_node_impl(node_t *check, int value) {
-	return;
-}
-
-static void heap_insert_node(tree_t *tree, int value) {
-	heap_insert_node_impl(tree->root, value);
-	return;
+	
+	switch(tree->type) {
+		case binary:
+			//destroy_node function traverses through tree to destroy each node
+			destroy_node(tree->root);
+			free(tree);
+			break;
+		case heap:
+			//heap
+			break;
+		case avl:
+			//avl
+			break;
+		default: //invalid tree type
+			//invalid
+			break;
+	}
+	
 }
 
 
@@ -423,16 +416,16 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 	}
 	
 	switch(transversal) {
-		case 0: //inorder
+		case inorder:
 			print_tree_inorder(tree->root);
 			break;
-		case 1: //preorder
+		case preorder:
 			print_tree_preorder(tree->root);
 			break;
-		case 2: //postorder
+		case postorder:
 			print_tree_postorder(tree->root);
 			break;
-		default: //invalid
+		default:
 			fprintf(stderr, "Invalid transversal in print_tree function\n");
 			return;
 	}

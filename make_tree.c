@@ -39,10 +39,16 @@ int main(int argc, char *argv[]) {
 	int value = rand() % upbound;
 	
 	
+	
+	/*
+	 * BINARY TREE TESTING
+	 */
+	printf("BINARY TREE TESTING:\n");
+	
 	//creating trees
 	printf("Creating tree with %d as root\n", value);
-	tree_t *tree = create_tree(binary, NULL);
-	tree_t *emptytree = create_tree(binary, NULL);
+	tree_t *tree = create_tree(binary, NULL, 0);
+	tree_t *emptytree = create_tree(binary, NULL, 0);
 	
 	//insert root into tree
 	insert_node(tree, value);
@@ -131,9 +137,24 @@ int main(int argc, char *argv[]) {
 	//test new num elements
 	printf("%d elements in tree\n", tree_get_num_elements(tree));
 	
-	//destroy trees and end
+	//destroy binary trees
 	destroy_tree(tree);
 	destroy_tree(emptytree);
+	
+	
+	/*
+	 * HEAP TREE TESTING
+	 */
+	printf("\nHEAP TREE TESTING:\n");
+	
+	tree_t *heaptree = create_tree(heap, NULL, 10);
+	tree_t *emptyheap = create_tree(heap, NULL, 10);
+	
+	
+	
+	//destroy heap trees
+	destroy_tree(heaptree);
+	destroy_tree(emptyheap);
 	
 	return(0);
 }

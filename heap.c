@@ -8,13 +8,24 @@
  * heap tree function definitions
  */
 
-/*
-static void heap_insert_node_impl(node_t *check, int value) {
+static void heapify(tree_t *tree) {
+	
 	return;
 }
 
 void heap_insert_node(tree_t *tree, int value) {
-	heap_insert_node_impl(tree->root, value);
+	if(tree == NULL) {
+		fprintf(stderr, "Tree pointer is NULL\n");
+		return;
+	}
+	
+	if(tree->num_elements == tree->heap_size) {
+		fprintf(stderr, "Heap at capacity, returning without insert\n");
+		return;
+	}
+	
+	(tree->heap_array)[tree->num_elements] = value;
+	
+	heapify(tree);
 	return;
 }
-*/

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 
+
 typedef enum transversal {
 	inorder,
 	preorder,
@@ -12,33 +13,18 @@ typedef enum transversal {
 } transversal_e;
 
 typedef enum tree_type {
-	binary,
-	avl,
+	binary = 1,
 	heap,
+	avl,
 	invalid_tree
 } tree_e;
 
-/*
- * struct definitions and typedefs
- */
- 
-struct tree;
-typedef struct tree tree_t;
 
-struct node;
-typedef struct node node_t;
-
-
-
-/*
- * node struct function declarations
- */
-
-//static function definitions in tree.c
 
 /*
  * function pointer typedefs
  */
+ 
 typedef void (*traversal_func)(void *);
 
 /* compare func return values:
@@ -49,11 +35,37 @@ typedef void (*traversal_func)(void *);
 typedef int (*compare_func)(void *, void *);
 
 
+
+/*
+ * struct definitions and typedefs
+ */
+ 
+typedef struct node node_t;
+
+typedef struct tree {
+	node_t *root;
+	tree_e type;
+	int num_elements;
+	int heap_size;
+	int *heap_array;
+	compare_func compare_fp;
+}tree_t;
+
+/*
+ * node struct function declarations
+ */
+
+//static function definitions in tree.c
+
+
+
 /*
  * tree struct function declarations
  */
 
-tree_t *create_tree(tree_e type, compare_func cp_f);
+//size is used to mark the number of elements in a heap tree
+//the size value is ignored for all tree types other than heap
+tree_t *create_tree(tree_e type, compare_func cp_f, int heap_size);
 void destroy_tree(tree_t *tree);
 
 //does nothing if inserted value already exists
@@ -76,6 +88,7 @@ bool tree_node_present(tree_t *tree, int value);
 //inorder = 0, preorder = 1, postorder = 2, invalid = 3
 //prints "NULL" if tree is empty and returns
 void print_tree(tree_t *tree, transversal_e transversal);
+
 
 
 #endif
