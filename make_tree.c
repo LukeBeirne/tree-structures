@@ -41,9 +41,13 @@ int main(int argc, char *argv[]) {
 	
 	
 	/*
-	 * BINARY TREE TESTING
+	 *
+	 * BINARY TREE TESTING *******************************************************
+	 *
 	 */
-	printf("BINARY TREE TESTING:\n");
+	printf("--------BINARY TREE TESTING--------\n");
+	
+	
 	
 	//creating trees
 	printf("Creating tree with %d as root\n", value);
@@ -143,13 +147,91 @@ int main(int argc, char *argv[]) {
 	
 	
 	/*
-	 * HEAP TREE TESTING
+	 *
+	 * HEAP TREE TESTING *******************************************************
+	 *
 	 */
-	printf("\nHEAP TREE TESTING:\n");
+	printf("\n--------HEAP TREE TESTING--------\n");
 	
+	
+	
+	//creating trees
 	tree_t *heaptree = create_tree(heap, NULL, 10);
 	tree_t *emptyheap = create_tree(heap, NULL, 10);
 	
+	//insert root into tree
+	insert_node(heaptree, 10);
+	
+	//print trees with only root value
+	print_tree(heaptree, inorder);
+	print_tree(emptyheap, inorder);
+	
+	//test emptiness
+	if(tree_empty(heaptree)) {
+		printf("The heap is empty\n");
+	}
+	else {
+		printf("The heap is not empty\n");
+	}
+	
+	if(tree_empty(emptyheap)) {
+		printf("The heap is empty\n");
+	}
+	else {
+		printf("The heap is not empty\n");
+	}
+	
+	//test depth
+	printf("Heap depth is %d\n", tree_depth(heaptree));
+	printf("Empty heap depth is %d\n", tree_depth(emptyheap));
+	
+	//test num elements
+	printf("%d elements in heap\n", tree_get_num_elements(heaptree));
+	printf("%d elements in empty heap\n", tree_get_num_elements(emptyheap));
+	
+	//test node present using root value
+	if(tree_node_present(heaptree, value)) {
+		printf("Value %d present in heap\n", value);
+	}
+	else printf("Value %d not present in heap\n", value);
+	
+	//insert values
+	for(int i = 0; i < 5; i++) {
+		insertvalue = rand() % upbound;
+		printf("Inserting value %d into heap\n", insertvalue);
+		insert_node(heaptree, insertvalue);
+	}
+	
+	//print new heap
+	printf("Heap contents:\n");
+	print_tree(heaptree, inorder);
+	
+	//test new depth
+	printf("Heap depth is %d\n", tree_depth(heaptree));
+	
+	//test new num elements
+	printf("%d elements in heap\n", tree_get_num_elements(heaptree));
+	
+	//test node present using last inserted value
+	if(tree_node_present(heaptree, insertvalue)) {
+		printf("Value %d present in heap\n", insertvalue);
+	}
+	else printf("Value %d not present in heap\n", insertvalue);
+	
+	//test removing value
+	removevalue = insertvalue;
+	printf("Removing value %d from heap\n", removevalue);
+	remove_node(heaptree, removevalue);
+	
+	//re-print heap
+	printf("Heap contents:\n");
+	print_tree(heaptree, inorder);
+	
+	//test new depth
+	printf("Heap depth is %d\n", tree_depth(heaptree));
+	
+	//test new num elements
+	printf("%d elements in heap\n", tree_get_num_elements(heaptree));
 	
 	
 	//destroy heap trees

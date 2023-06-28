@@ -63,8 +63,8 @@ typedef struct tree {
  * tree struct function declarations
  */
 
-//size is used to mark the number of elements in a heap tree
-//the size value is ignored for all tree types other than heap
+//heap_size is used to mark the number of elements in a heap tree
+//the size value is ignored for all non-heap tree types
 tree_t *create_tree(tree_e type, compare_func cp_f, int heap_size);
 void destroy_tree(tree_t *tree);
 
@@ -86,6 +86,7 @@ int tree_get_num_elements(tree_t *tree);
 bool tree_node_present(tree_t *tree, int value);
 
 //inorder = 0, preorder = 1, postorder = 2, invalid = 3
+//transversal value is ignored for heap trees
 //prints "NULL" if tree is empty and returns
 void print_tree(tree_t *tree, transversal_e transversal);
 

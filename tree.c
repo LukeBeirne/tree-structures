@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
+#include "binary.h"
 #include "heap.h"
 
 #define valid_tree_type(t) \
@@ -10,7 +11,8 @@
 
 
 /*
-try heap
+implement heap functions
+move binary tree functions to separate file
 */
 
 
@@ -87,7 +89,8 @@ void destroy_tree(tree_t *tree) {
 			free(tree);
 			break;
 		case heap:
-			//heap
+			free(tree->heap_array);
+			free(tree);
 			break;
 		case avl:
 			//avl
@@ -137,6 +140,20 @@ void insert_node(tree_t *tree, int value) {
 		return;
 	}
 	
+	switch(tree->type) {
+		case binary:
+			//binary
+			break;
+		case heap:
+			heap_insert_node(tree, value);
+			return;
+		case avl:
+			//avl
+			break;
+		default: //invalid tree type
+			//invalid
+			break;
+	}
 	
 	//case where tree is empty, value inserted as root
 	if(tree->root == NULL) {
@@ -260,36 +277,27 @@ bool tree_empty(tree_t *tree) {
  * tree depth:
  * https://www.baeldung.com/cs/binary-tree-height#:~:text=A%20similar%20concept%20in%20a,the%20most%20distant%20leaf%20node.
  */
-
-static int tree_depth_impl(node_t *node) {
-	if(node == NULL) {
-		return 0;
-	}
-	
-	
-	int left = tree_depth_impl(node->child1);
-	int right = tree_depth_impl(node->child2);
-	
-	if(left > right) {
-		return left + 1;
-	}
-	return right + 1;
-}
-
 int tree_depth(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return 0;
 	}
 	
-	node_t *node = tree->root;
 	
-	if(node == NULL) {
-		return 0;
+	switch(tree->type) {
+		case binary:
+			return binary_depth(tree->root);
+			break;
+		case heap:
+			return heap_depth(tree);
+		case avl:
+			//avl
+			break;
+		default: //invalid tree type
+			fprintf(stderr, "Invalid tree type\n");
+			return 0;
 	}
-	
-	return tree_depth_impl(node);
-		
+	return 0;	
 }
 
 
@@ -340,95 +348,30 @@ bool tree_node_present(tree_t *tree, int value) {
 }
 
 
-void print_tree_inorder(node_t *node) {
-	if(node == NULL) {
-		printf("NULL\n");
-	}
-	
-	
-	if(node->child1 != NULL) {
-		print_tree_inorder(node->child1);
-	}
-	
-	printf("%d\n", node->value);
-	
-	if(node->child2 != NULL) {
-		print_tree_inorder(node->child2);
-	}
-	
-	return;
-}
-
-void print_tree_preorder(node_t *node) {
-	if(node == NULL) {
-		printf("NULL\n");
-	}
-	
-	
-	printf("%d\n", node->value);
-	
-	if(node->child1 != NULL) {
-		print_tree_preorder(node->child1);
-	}
-	
-	if(node->child2 != NULL) {
-		print_tree_preorder(node->child2);
-	}
-	
-	return;
-}
-
-void print_tree_postorder(node_t *node) {
-	if(node == NULL) {
-		printf("NULL\n");
-	}
-	
-	
-	if(node->child1 != NULL) {
-		print_tree_postorder(node->child1);
-	}
-	
-	if(node->child2 != NULL) {
-		print_tree_postorder(node->child2);
-	}
-	
-	printf("%d\n", node->value);
-	
-	return;
-}
-
 void print_tree(tree_t *tree, transversal_e transversal) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
 	}
 	
-	//check for valid transversal type
-	if(!(valid_tree_type(transversal))) {
-		fprintf(stderr, "Invalid transversal in print_tree function\n");
-		return;
-	}
-	
-	//check for empty tree
-	if(tree->root == NULL) {
-		printf("NULL\n");
-		return;
-	}
-	
-	switch(transversal) {
-		case inorder:
-			print_tree_inorder(tree->root);
-			break;
-		case preorder:
-			print_tree_preorder(tree->root);
-			break;
-		case postorder:
-			print_tree_postorder(tree->root);
-			break;
-		default:
-			fprintf(stderr, "Invalid transversal in print_tree function\n");
+	switch(tree->type) {
+		case binary:
+			print_binary(tree);
 			return;
+		case heap:
+			print_heap(tree);
+			return;
+		case avl:
+			//avl
+			break;
+		default: //invalid tree type
+			//invalid
+			break;
 	}
+	
+	
+	
+	
 	
 	return;
 	
