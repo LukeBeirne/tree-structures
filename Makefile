@@ -2,10 +2,11 @@ CC = gcc
 CFLAGS = -g -Wall
 LFLAGS = -lm
 PROGS = make_tree
+OBJS = make_tree.o tree.o binary.o heap.o
 all: $(PROGS)
 
 make_tree: make_tree.o tree.o binary.o heap.o
-	$(CC) $(LFLAGS) -o make_tree make_tree.o tree.o binary.o heap.o
+	$(CC) -o make_tree $(OBJS) $(LFLAGS)
 
 make_tree.o: make_tree.c
 	$(CC) $(CFLAGS) -c make_tree.c

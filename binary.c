@@ -15,10 +15,66 @@ struct node {
 };
 
 
+/*
+ * node struct function definitions
+ */
+
+static node_t *create_node(int value) {
+	node_t *node = (node_t *)malloc(sizeof(node_t));
+	node->value = value;
+	node->child1 = NULL;
+	node->child2 = NULL;
+	return node;
+}
+
+
+static void destroy_node(node_t *node) {
+	if(node == NULL) {
+		return;
+	}
+	
+	if(node->child1 != NULL) {
+		destroy_node(node->child1);
+	}
+	if(node->child2 != NULL) {
+		destroy_node(node->child2);
+	}
+	
+	free(node);
+}
+
+
 
 /*
  * binary tree function definitions
  */
+
+node_t *binary_insert_node(node_t *check, int value, bool *present) {
+	if(check == NULL) {
+		return create_node(value);
+	}
+	
+	
+	int nodeval = check->value;
+	
+	if(nodeval == value) {
+		printf("Value %d already present in tree\n", value);
+		*present = true;
+	}
+	
+	if(value < nodeval) {
+		//left child
+		check->child1 = binary_insert_node(check->child1, value, present);
+	}
+	
+	if(value > nodeval) {
+		//right child
+		check->child2 = binary_insert_node(check->child2, value, present);
+	}
+	
+	return check;
+}
+
 
 int binary_depth(node_t *node) {	
 	if(node == NULL) {
@@ -33,6 +89,27 @@ int binary_depth(node_t *node) {
 		return left + 1;
 	}
 	return right + 1;
+}
+
+
+bool binary_tree_node_present(node_t *check, int value) {
+	int checkval = check->value;
+	
+	if(checkval == value) {
+		return true;
+	}
+	
+	if(value < checkval) {
+		if(check->child1 == NULL) {
+			return false;
+		}
+		return binary_tree_node_present(check->child1, value);
+	}
+	
+	if(check->child2 == NULL) {
+		return false;
+	}
+	return binary_tree_node_present(check->child2, value);
 }
 
 

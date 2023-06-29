@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "tree.h"
 
 
@@ -29,8 +30,6 @@ void heap_insert_node(tree_t *tree, int value) {
 		return;
 	}
 	
-	//printf("value = %d\n", value);
-	//printf("num_elements = %d\n", tree->num_elements);
 	(tree->heap_array)[tree->num_elements] = value;
 	
 	tree->num_elements += 1;
@@ -39,6 +38,10 @@ void heap_insert_node(tree_t *tree, int value) {
 	return;
 }
 
+/* 
+ * depth formula for heap structures using number of elements:
+ * https://www.geeksforgeeks.org/height-complete-binary-tree-heap-n-nodes/
+ */
 int heap_depth(tree_t *tree) {	
 	if(tree->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
@@ -50,7 +53,7 @@ int heap_depth(tree_t *tree) {
 		return 0;
 	}
 	
-	return 0;
+	return (int)(floor(log2(tree->num_elements))+1);
 }
 
 void print_heap(tree_t *tree) {	

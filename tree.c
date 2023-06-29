@@ -108,32 +108,6 @@ void destroy_tree(tree_t *tree) {
  * binary tree function definitions
  */
 
-static node_t *insert_node_impl(node_t *check, int value, bool *present) {
-	if(check == NULL) {
-		return create_node(value);
-	}
-	
-	
-	int nodeval = check->value;
-	
-	if(nodeval == value) {
-		printf("Value %d already present in tree\n", value);
-		*present = true;
-	}
-	
-	if(value < nodeval) {
-		//left child
-		check->child1 = insert_node_impl(check->child1, value, present);
-	}
-	
-	if(value > nodeval) {
-		//right child
-		check->child2 = insert_node_impl(check->child2, value, present);
-	}
-	
-	return check;
-}
-
 void insert_node(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
@@ -142,8 +116,21 @@ void insert_node(tree_t *tree, int value) {
 	
 	switch(tree->type) {
 		case binary:
-			//binary
-			break;
+			//case where tree is empty, value inserted as root
+			if(tree->root == NULL) {
+				tree->root = create_node(value);
+				tree->num_elements += 1;
+				return;
+			}
+			
+			bool present = false;
+			tree->root = binary_insert_node(tree->root, value, &present);
+	
+			if(!present) {
+				tree->num_elements += 1;
+			}
+			return;
+			
 		case heap:
 			heap_insert_node(tree, value);
 			return;
@@ -155,27 +142,6 @@ void insert_node(tree_t *tree, int value) {
 			break;
 	}
 	
-	//case where tree is empty, value inserted as root
-	if(tree->root == NULL) {
-		tree->root = create_node(value);
-		tree->num_elements += 1;
-		return;
-	}
-	
-	//heap tree
-	if(tree->type == heap) {
-		heap_insert_node(tree, value);
-		return;
-	}
-	
-	//case where tree is not empty, value inserted where appropriate
-	bool present = false;
-	tree->root = insert_node_impl(tree->root, value, &present);
-	
-	if(!present) {
-		tree->num_elements += 1;
-	}
-	return;
 }
 
 
@@ -273,8 +239,8 @@ bool tree_empty(tree_t *tree) {
 }
 
 
-/* algorithm used to calculate
- * tree depth:
+/* 
+ * algorithm used to calculate tree depth:
  * https://www.baeldung.com/cs/binary-tree-height#:~:text=A%20similar%20concept%20in%20a,the%20most%20distant%20leaf%20node.
  */
 int tree_depth(tree_t *tree) {
@@ -312,26 +278,6 @@ int tree_get_num_elements(tree_t *tree) {
 }
 
 
-bool tree_node_present_impl(node_t *check, int value) {
-	int checkval = check->value;
-	
-	if(checkval == value) {
-		return true;
-	}
-	
-	if(value < checkval) {
-		if(check->child1 == NULL) {
-			return false;
-		}
-		return tree_node_present_impl(check->child1, value);
-	}
-	
-	if(check->child2 == NULL) {
-		return false;
-	}
-	return tree_node_present_impl(check->child2, value);
-}
-
 bool tree_node_present(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
@@ -339,12 +285,29 @@ bool tree_node_present(tree_t *tree, int value) {
 	}
 	
 	
-	//case where tree is empty
-	if(tree->root == NULL) {
-		return false;
+	switch(tree->type) {
+		case binary:
+			//case where tree is empty
+			if(tree->root == NULL) {
+				return false;
+			}
+			
+			return binary_tree_node_present(tree->root, value);
+			
+		case heap:
+			break;
+		case avl:
+			//avl
+			break;
+		default: //invalid tree type
+			//invalid
+			break;
 	}
 	
-	return tree_node_present_impl(tree->root, value);
+	
+	
+	
+	return false;
 }
 
 

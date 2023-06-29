@@ -5,5 +5,3 @@ There is currently only support for the integer binary tree, offering functions 
 to interact with it.
 
 At the moment, tree.c contains all of the function content and make_tree.c tests them by arbitrarily picking random values and calling all of the functions on a tree holding those values.
-
-Simply copy the repository and run "make" and you'll be able to run it yourself. Alternatively, you can incorporate this setup into a different repository by copying everything except make_tree.c and including tree.h in the program.
