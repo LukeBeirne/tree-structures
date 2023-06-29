@@ -12,7 +12,6 @@
 
 /*
 implement heap functions
-move binary tree functions to separate file
 */
 
 
@@ -102,11 +101,6 @@ void destroy_tree(tree_t *tree) {
 	
 }
 
-
-
-/*
- * binary tree function definitions
- */
 
 void insert_node(tree_t *tree, int value) {
 	if(tree == NULL) {
