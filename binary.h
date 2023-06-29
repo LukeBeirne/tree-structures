@@ -20,15 +20,4 @@ void print_binary(tree_t *tree);
 
 
 
-/* function catalogue
-tree_t *create_tree(tree_e type, compare_func cp_f, int heap_size);
-void destroy_tree(tree_t *tree);
-
-void remove_node(tree_t *tree, int value);
-
-//returns true if input tree is NULL
-bool tree_empty(tree_t *tree);
-*/
-
-
 #endif
