@@ -231,7 +231,7 @@ bool tree_empty(tree_t *tree) {
 	}
 	
 	
-	if(tree->root == NULL) {
+	if(tree->num_elements == 0) {
 		return true;
 	}
 	
