@@ -16,7 +16,7 @@ int avl_depth(node_t *node);
 
 bool avl_tree_node_present(node_t *check, int value);
 
-void avl_binary(tree_t *tree);
+void print_avl(tree_t *tree);
 
 
 
