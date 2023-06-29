@@ -158,6 +158,11 @@ int binary_depth(node_t *node) {
 
 
 bool binary_tree_node_present(node_t *check, int value) {
+	//case where tree is empty
+	if(check == NULL) {
+		return false;
+	}
+	
 	int checkval = check->value;
 	
 	if(checkval == value) {

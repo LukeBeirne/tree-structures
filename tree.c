@@ -147,7 +147,7 @@ void remove_node(tree_t *tree, int value) {
 	
 	
 	switch(tree->type) {
-		case binary:
+		case binary: ;
 			bool present = false;
 			tree->root = binary_remove_node(tree->root, value, &present);
 			if(present) {
@@ -156,7 +156,17 @@ void remove_node(tree_t *tree, int value) {
 			return;
 			
 		case heap:
-			fprintf(stderr, "Cannot call remove_node function on heap structure\n");
+			if(value == (tree->heap_array)[0]) {
+				heap_remove_root(tree);
+				return;
+			}
+			
+			if(value == (tree->heap_array)[tree->num_elements-1]) {
+				heap_remove_last(tree);
+				return;
+			}
+			
+			fprintf(stderr, "Cannot remove middle value from heap structure\n");
 			return;
 			
 		case avl:
@@ -232,16 +242,12 @@ bool tree_node_present(tree_t *tree, int value) {
 	
 	
 	switch(tree->type) {
-		case binary:
-			//case where tree is empty
-			if(tree->root == NULL) {
-				return false;
-			}
-			
+		case binary:			
 			return binary_tree_node_present(tree->root, value);
 			
 		case heap:
-			break;
+			return heap_tree_node_present(tree, value);
+			
 		case avl:
 			//avl
 			break;

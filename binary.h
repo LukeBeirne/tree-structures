@@ -10,6 +10,7 @@
  */
 
 node_t *binary_insert_node(node_t *check, int value, bool *present);
+node_t *binary_remove_node(node_t *check, int value, bool *present);
 
 int binary_depth(node_t *node);
 

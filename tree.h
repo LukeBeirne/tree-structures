@@ -68,9 +68,10 @@ typedef struct tree {
 tree_t *create_tree(tree_e type, compare_func cp_f, int heap_size);
 void destroy_tree(tree_t *tree);
 
-//does nothing if inserted value already exists
+//for non-heap trees it does nothing if inserted value already exists
 void insert_node(tree_t *tree, int value);
 
+//does nothing if value to be removed does not exist
 void remove_node(tree_t *tree, int value);
 
 //returns true if input tree is NULL
