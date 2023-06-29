@@ -76,6 +76,71 @@ node_t *binary_insert_node(node_t *check, int value, bool *present) {
 }
 
 
+static node_t *find_left_leaf(node_t *node) {
+	if(node == NULL) {
+		return NULL;
+	}
+	
+	if(node->child1 == NULL) {
+		return node;
+	} else return find_left_leaf(node->child1);
+	
+}
+
+node_t *binary_remove_node(node_t *check, int value, bool *present) {
+	if(check == NULL) {
+		return NULL;
+	}
+	
+	
+	int nodeval = check->value;
+	
+	if(nodeval == value) {
+		*present = true;
+		//node to be removed has no children
+		if(check->child1 == NULL && check->child2 == NULL) {
+			destroy_node(check);
+			return NULL;
+		
+		//node to be removed has one child
+		} else if((check->child1 != NULL) ^ (check->child2 != NULL)) {
+			
+			//case for left child
+			if(check->child1 != NULL) {
+				node_t *temp = check->child1;
+				destroy_node(check);
+				return temp;
+				
+			//case for right child
+			} else {
+				node_t *temp = check->child2;
+				destroy_node(check);
+				return temp;
+			}
+			
+		//node to be removed has two children
+		} else {
+			node_t *leaf = find_left_leaf(check->child2);
+			check->value = leaf->value;
+			check->child2 = binary_remove_node(check->child2, check->value, present);
+			return check;
+		}
+	}
+	
+	if(value < nodeval) {
+		//left child
+		check->child1 = binary_remove_node(check->child1, value, present);
+	}
+	
+	if(value > nodeval) {
+		//right child
+		check->child2 = binary_remove_node(check->child2, value, present);
+	}
+	
+	return check;
+}
+
+
 int binary_depth(node_t *node) {	
 	if(node == NULL) {
 		return 0;

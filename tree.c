@@ -96,7 +96,7 @@ void destroy_tree(tree_t *tree) {
 			//avl
 			break;
 		default: //invalid tree type
-			//invalid
+			fprintf(stderr, "Invalid tree type\n");
 			break;
 	}
 	
@@ -138,76 +138,12 @@ void insert_node(tree_t *tree, int value) {
 			//avl
 			break;
 		default: //invalid tree type
-			//invalid
+			fprintf(stderr, "Invalid tree type\n");
 			break;
 	}
 	
 }
 
-
-static node_t *find_left_leaf(node_t *node) {
-	if(node == NULL) {
-		return NULL;
-	}
-	
-	if(node->child1 == NULL) {
-		return node;
-	} else return find_left_leaf(node->child1);
-	
-}
-
-static node_t *remove_node_impl(node_t *check, int value, bool *present) {
-	if(check == NULL) {
-		return NULL;
-	}
-	
-	
-	int nodeval = check->value;
-	
-	if(nodeval == value) {
-		*present = true;
-		//node to be removed has no children
-		if(check->child1 == NULL && check->child2 == NULL) {
-			destroy_node(check);
-			return NULL;
-		
-		//node to be removed has one child
-		} else if((check->child1 != NULL) ^ (check->child2 != NULL)) {
-			
-			//case for left child
-			if(check->child1 != NULL) {
-				node_t *temp = check->child1;
-				destroy_node(check);
-				return temp;
-				
-			//case for right child
-			} else {
-				node_t *temp = check->child2;
-				destroy_node(check);
-				return temp;
-			}
-			
-		//node to be removed has two children
-		} else {
-			node_t *leaf = find_left_leaf(check->child2);
-			check->value = leaf->value;
-			check->child2 = remove_node_impl(check->child2, check->value, present);
-			return check;
-		}
-	}
-	
-	if(value < nodeval) {
-		//left child
-		check->child1 = remove_node_impl(check->child1, value, present);
-	}
-	
-	if(value > nodeval) {
-		//right child
-		check->child2 = remove_node_impl(check->child2, value, present);
-	}
-	
-	return check;
-}
 
 void remove_node(tree_t *tree, int value) {
 	if(tree == NULL) {
@@ -216,12 +152,27 @@ void remove_node(tree_t *tree, int value) {
 	}
 	
 	
-	bool present = false;
-	tree->root = remove_node_impl(tree->root, value, &present);
-	if(present) {
-		tree->num_elements -= 1;
+	switch(tree->type) {
+		case binary:
+			bool present = false;
+			tree->root = binary_remove_node(tree->root, value, &present);
+			if(present) {
+				tree->num_elements -= 1;
+			}
+			return;
+			
+		case heap:
+			fprintf(stderr, "Cannot call remove_node function on heap structure\n");
+			return;
+			
+		case avl:
+			//avl
+			break;
+		default: //invalid tree type
+			fprintf(stderr, "Invalid tree type\n");
+			break;
 	}
-	return;
+	
 }
 
 bool tree_empty(tree_t *tree) {
@@ -263,6 +214,7 @@ int tree_depth(tree_t *tree) {
 			fprintf(stderr, "Invalid tree type\n");
 			return 0;
 	}
+	
 	return 0;	
 }
 
@@ -304,9 +256,6 @@ bool tree_node_present(tree_t *tree, int value) {
 			break;
 	}
 	
-	
-	
-	
 	return false;
 }
 
@@ -331,12 +280,6 @@ void print_tree(tree_t *tree, transversal_e transversal) {
 			//invalid
 			break;
 	}
-	
-	
-	
-	
-	
-	return;
 	
 }
 
