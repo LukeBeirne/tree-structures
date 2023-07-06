@@ -49,6 +49,17 @@ static void destroy_node(node_t *node) {
  * avl tree function definitions
  */
 
+tree_t *avl_create(tree_t *tree) {
+	return tree;
+}
+
+void avl_destroy(tree_t *tree) {
+	//destroy_node function traverses through tree to destroy each node
+	destroy_node(tree->root);
+	free(tree);
+}
+
+
 node_t *avl_insert_node(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return create_node(value);
@@ -140,6 +151,11 @@ node_t *avl_remove_node(node_t *check, int value, bool *present) {
 	return check;
 }
 
+void avl_pop(tree_t *tree) {
+	bool present = false;
+	avl_remove_node(tree->root, tree->root->value, &present);
+}
+
 
 int avl_depth(node_t *node) {	
 	if(node == NULL) {
@@ -147,8 +163,8 @@ int avl_depth(node_t *node) {
 	}
 	
 	
-	int left = binary_depth(node->child1);
-	int right = binary_depth(node->child2);
+	int left = avl_depth(node->child1);
+	int right = avl_depth(node->child2);
 	
 	if(left > right) {
 		return left + 1;
@@ -157,7 +173,7 @@ int avl_depth(node_t *node) {
 }
 
 
-bool avl_tree_node_present(node_t *check, int value) {
+bool avl_present(node_t *check, int value) {
 	//case where tree is empty
 	if(check == NULL) {
 		return false;
@@ -240,7 +256,7 @@ static void print_tree_postorder(node_t *node) {
 	return;
 }
 
-void print_avl(tree_t *tree, transversal_e transversal) {
+void avl_print(tree_t *tree, transversal_e transversal) {
 	//check for valid transversal type
 	if(!(valid_tree_type(transversal))) {
 		fprintf(stderr, "Invalid transversal in print_tree function\n");
@@ -254,7 +270,7 @@ void print_avl(tree_t *tree, transversal_e transversal) {
 	}
 			
 	//transversal switch case for
-	//binary tree
+	//avl tree
 	switch(transversal) {
 		case inorder:
 			print_tree_inorder(tree->root);
@@ -270,3 +286,16 @@ void print_avl(tree_t *tree, transversal_e transversal) {
 			return;
 	}
 }
+
+
+
+tree_ops_t avl_ops = {
+	.create = avl_create,
+	.destroy = avl_destroy,
+	.insert = avl_insert_node,
+	.remove = avl_remove,
+	.pop = avl_pop,
+	.depth = avl_depth,
+	.present = avl_present,
+	.print = avl_print
+};

@@ -92,8 +92,17 @@ int main(int argc, char *argv[]) {
 	//test node present using last inserted value
 	if(tree_node_present(tree, insertvalue)) {
 		printf("Value %d present in tree\n", insertvalue);
+	} 
+	else {
+		printf("Value %d not present in tree\n", insertvalue);
 	}
-	else printf("Value %d not present in tree\n", insertvalue);
+	
+	if(tree_node_present(tree, 101)) {
+		printf("Value %d present in tree\n", 101);
+	}
+	else {
+		printf("Value %d not present in tree\n", 101);
+	}
 	
 	//test removing value
 	int removevalue = 40;

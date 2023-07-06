@@ -109,6 +109,8 @@ void insert_node(tree_t *tree, int value) {
 		return;
 	}
 	
+	bool present = false;
+	
 	switch(tree->type) {
 		case binary:
 			//case where tree is empty, value inserted as root
@@ -118,7 +120,6 @@ void insert_node(tree_t *tree, int value) {
 				return;
 			}
 			
-			bool present = false;
 			tree->root = binary_insert_node(tree->root, value, &present);
 	
 			if(!present) {
@@ -130,8 +131,19 @@ void insert_node(tree_t *tree, int value) {
 			heap_insert_node(tree, value);
 			return;
 		case avl:
-			//avl
-			break;
+			//case where tree is empty, value inserted as root
+			if(tree->root == NULL) {
+				tree->root = create_node(value);
+				tree->num_elements += 1;
+				return;
+			}
+			
+			tree->root = avl_insert_node(tree->root, value, &present);
+	
+			if(!present) {
+				tree->num_elements += 1;
+			}
+			return;
 		default: //invalid tree type
 			fprintf(stderr, "Invalid tree type\n");
 			break;

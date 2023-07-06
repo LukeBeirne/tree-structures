@@ -49,6 +49,17 @@ static void destroy_node(node_t *node) {
  * binary tree function definitions
  */
 
+tree_t *binary_create(tree_t *tree) {
+	return tree;
+}
+
+void binary_destroy(tree_t *tree) {
+	//destroy_node function traverses through tree to destroy each node
+	destroy_node(tree->root);
+	free(tree);
+}
+
+
 node_t *binary_insert_node(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return create_node(value);
@@ -140,6 +151,11 @@ node_t *binary_remove_node(node_t *check, int value, bool *present) {
 	return check;
 }
 
+void binary_pop(tree_t *tree) {
+	bool present = false;
+	binary_remove_node(tree->root, tree->root->value, &present);
+}
+
 
 int binary_depth(node_t *node) {	
 	if(node == NULL) {
@@ -157,7 +173,7 @@ int binary_depth(node_t *node) {
 }
 
 
-bool binary_tree_node_present(node_t *check, int value) {
+bool binary_present(node_t *check, int value) {
 	//case where tree is empty
 	if(check == NULL) {
 		return false;
@@ -240,7 +256,7 @@ static void print_tree_postorder(node_t *node) {
 	return;
 }
 
-void print_binary(tree_t *tree, transversal_e transversal) {
+void binary_print(tree_t *tree, transversal_e transversal) {
 	//check for valid transversal type
 	if(!(valid_tree_type(transversal))) {
 		fprintf(stderr, "Invalid transversal in print_tree function\n");
@@ -270,3 +286,16 @@ void print_binary(tree_t *tree, transversal_e transversal) {
 			return;
 	}
 }
+
+
+
+tree_ops_t binary_ops = {
+	.create = binary_create,
+	.destroy = binary_destroy,
+	.insert = binary_insert_node,
+	.remove = binary_remove,
+	.pop = binary_pop,
+	.depth = binary_depth,
+	.present = binary_present,
+	.print = binary_print
+};
