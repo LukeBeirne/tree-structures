@@ -102,7 +102,7 @@ tree_t *heap_create(tree_t *tree, int heap_size) {
 }
 
 void heap_destroy(tree_t *tree) {
-	free(heap->array);
+	free(tree->heap_array);
 }
 
 

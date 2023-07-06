@@ -60,7 +60,7 @@ void binary_destroy(tree_t *tree) {
 }
 
 
-node_t *binary_insert_node(node_t *check, int value, bool *present) {
+node_t *binary_insert(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return create_node(value);
 	}
@@ -75,12 +75,12 @@ node_t *binary_insert_node(node_t *check, int value, bool *present) {
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = binary_insert_node(check->child1, value, present);
+		check->child1 = binary_insert(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = binary_insert_node(check->child2, value, present);
+		check->child2 = binary_insert(check->child2, value, present);
 	}
 	
 	return check;
@@ -98,7 +98,7 @@ static node_t *find_left_leaf(node_t *node) {
 	
 }
 
-node_t *binary_remove_node(node_t *check, int value, bool *present) {
+node_t *binary_remove(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return NULL;
 	}
@@ -133,19 +133,19 @@ node_t *binary_remove_node(node_t *check, int value, bool *present) {
 		} else {
 			node_t *leaf = find_left_leaf(check->child2);
 			check->value = leaf->value;
-			check->child2 = binary_remove_node(check->child2, check->value, present);
+			check->child2 = binary_remove(check->child2, check->value, present);
 			return check;
 		}
 	}
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = binary_remove_node(check->child1, value, present);
+		check->child1 = binary_remove(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = binary_remove_node(check->child2, value, present);
+		check->child2 = binary_remove(check->child2, value, present);
 	}
 	
 	return check;
@@ -153,7 +153,7 @@ node_t *binary_remove_node(node_t *check, int value, bool *present) {
 
 void binary_pop(tree_t *tree) {
 	bool present = false;
-	binary_remove_node(tree->root, tree->root->value, &present);
+	binary_remove(tree->root, tree->root->value, &present);
 }
 
 
@@ -189,13 +189,13 @@ bool binary_present(node_t *check, int value) {
 		if(check->child1 == NULL) {
 			return false;
 		}
-		return binary_tree_node_present(check->child1, value);
+		return binary_present(check->child1, value);
 	}
 	
 	if(check->child2 == NULL) {
 		return false;
 	}
-	return binary_tree_node_present(check->child2, value);
+	return binary_present(check->child2, value);
 }
 
 
@@ -292,7 +292,7 @@ void binary_print(tree_t *tree, transversal_e transversal) {
 tree_ops_t binary_ops = {
 	.create = binary_create,
 	.destroy = binary_destroy,
-	.insert = binary_insert_node,
+	.insert = binary_insert,
 	.remove = binary_remove,
 	.pop = binary_pop,
 	.depth = binary_depth,

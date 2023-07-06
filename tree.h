@@ -22,11 +22,10 @@ typedef enum tree_type {
 
 
 /*
- * struct definitions and typedefs
+ * function pointer typedefs
  */
  
-typedef struct node node_t;
-
+typedef void (*traversal_func)(void *);
 
 /* compare func return values:
 -1 for first input < second input
@@ -35,38 +34,24 @@ typedef struct node node_t;
 */
 typedef int (*compare_func)(void *, void *);
 
-typedef struct tree {
-	node_t *root;
-	tree_e type;
-	int num_elements;
-	int heap_size;
-	int *heap_array;
-	compare_func compare_fp;
-	tree_ops_t *ops;
-}tree_t;
+typedef struct tree tree_t;
 
-extern tree_ops_t heap_ops;
-extern tree_ops_t binary_ops;
-extern tree_ops_t avl_ops;
+typedef tree_t *(*create_op)(void *, int);
+typedef void (*destroy_op)(void *);
+typedef void (*insert_op)(void *, int);
+typedef void (*remove_op)(void *, int);
+typedef void (*pop_op)(void *);
+typedef int (*depth_op)(void *);
+typedef bool (*present_op)(void *, int);
+typedef void (*print_op)(void *, transversal_e);
 
 
 
 /*
- * function pointer typedefs
+ * struct definitions and typedefs
  */
  
-typedef void (*traversal_func)(void *);
-
-typedef tree_t *(*create_op)(void *, void *);
-typedef void (*destroy_op)(void *);
-typedef void (*insert_op)(void *, void *);
-typedef void (*remove_op)(void *, void *);
-typedef void (*pop_op)(void *);
-typedef int (*depth_op)(void *);
-typedef bool (*present_op)(void *, void *);
-typedef void (*print_op)(void *, void *);
-
-
+typedef struct node node_t;
 
 typedef struct tree_ops {
 	create_op create;
@@ -79,12 +64,28 @@ typedef struct tree_ops {
 	print_op print;
 }tree_ops_t;
 
+struct tree {
+	node_t *root;
+	tree_e type;
+	int num_elements;
+	int heap_size;
+	int *heap_array;
+	compare_func compare_fp;
+	tree_ops_t *ops;
+};
+
+extern tree_ops_t heap_ops;
+extern tree_ops_t binary_ops;
+extern tree_ops_t avl_ops;
+
 
 
 /*
  * generic tree functions
  */
 
+//heap_size is used to mark the number of elements in a heap tree
+//the size value is ignored for all non-heap tree types
 tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
 	tree_t *tree = (tree_t *)calloc(1, sizeof(tree_t));
 	tree->compare_fp = c_func;
@@ -92,14 +93,14 @@ tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
 	
 	switch(type) {
 		case binary:
-			tree->ops = binary_ops;
+			tree->ops = &binary_ops;
 			break;
 			//return tree->ops->create(tree);
 		case heap:
-			tree->ops = heap_ops;
+			tree->ops = &heap_ops;
 			return tree->ops->create(tree, heap_size);
 		case avl:
-			tree->ops = avl_ops;
+			tree->ops = &avl_ops;
 			break;
 			//return tree->ops->create(tree);
 		default: //invalid tree type
@@ -110,7 +111,7 @@ tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
 }
 
 void destroy_tree(tree_t *tree) {
-	tree->ops->destroy;
+	tree->ops->destroy(tree);
 	
 	free(tree);
 }
@@ -132,7 +133,7 @@ bool empty(tree_t *tree) {
 int get_num_elements(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
+		return 0;
 	}
 	
 	return tree->num_elements;
@@ -141,26 +142,6 @@ int get_num_elements(tree_t *tree) {
 /*
  * static inline tree struct function declarations
  */
-
-//heap_size is used to mark the number of elements in a heap tree
-//the size value is ignored for all non-heap tree types
-static inline tree_t *create_tree(tree_t *tree, compare_func cp_f, int heap_size) {
-	if(tree == NULL) {
-		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
-	}
-	
-	return tree->ops->create(tree, fp_f, heap_size);
-}
-
-static inline void destroy_tree(tree_t *tree) {
-	if(tree == NULL) {
-		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
-	}
-	
-	tree->ops->destroy(tree);
-}
 
 //for non-heap trees it does nothing if inserted value already exists
 static inline void insert_node(tree_t *tree, int value) {
@@ -195,31 +176,31 @@ static inline void pop(tree_t *tree) {
 static inline int depth(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
+		return 0;
 	}
 	
 	return tree->ops->depth(tree);
 }
 
 //returns false if input tree is NULL
-static inline bool present(tree_t *tree) {
+static inline bool present(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
+		return false;
 	}
 	
-	return tree->ops->present(tree);
+	return tree->ops->present(tree, value);
 }
 
 //transversal value is ignored for heap trees
 //prints "NULL" if input tree is empty
-static inline void print(tree_t *tree) {
+static inline void print(tree_t *tree, transversal_e transversal) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
 	}
 	
-	tree->ops->print(tree);
+	tree->ops->print(tree, transversal);
 }
 
 

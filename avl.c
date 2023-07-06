@@ -60,7 +60,7 @@ void avl_destroy(tree_t *tree) {
 }
 
 
-node_t *avl_insert_node(node_t *check, int value, bool *present) {
+node_t *avl_insert(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return create_node(value);
 	}
@@ -75,12 +75,12 @@ node_t *avl_insert_node(node_t *check, int value, bool *present) {
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = avl_insert_node(check->child1, value, present);
+		check->child1 = avl_insert(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = avl_insert_node(check->child2, value, present);
+		check->child2 = avl_insert(check->child2, value, present);
 	}
 	
 	return check;
@@ -98,7 +98,7 @@ static node_t *find_left_leaf(node_t *node) {
 	
 }
 
-node_t *avl_remove_node(node_t *check, int value, bool *present) {
+node_t *avl_remove(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return NULL;
 	}
@@ -133,19 +133,19 @@ node_t *avl_remove_node(node_t *check, int value, bool *present) {
 		} else {
 			node_t *leaf = find_left_leaf(check->child2);
 			check->value = leaf->value;
-			check->child2 = avl_remove_node(check->child2, check->value, present);
+			check->child2 = avl_remove(check->child2, check->value, present);
 			return check;
 		}
 	}
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = avl_remove_node(check->child1, value, present);
+		check->child1 = avl_remove(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = avl_remove_node(check->child2, value, present);
+		check->child2 = avl_remove(check->child2, value, present);
 	}
 	
 	return check;
@@ -153,7 +153,7 @@ node_t *avl_remove_node(node_t *check, int value, bool *present) {
 
 void avl_pop(tree_t *tree) {
 	bool present = false;
-	avl_remove_node(tree->root, tree->root->value, &present);
+	avl_remove(tree->root, tree->root->value, &present);
 }
 
 
@@ -189,13 +189,13 @@ bool avl_present(node_t *check, int value) {
 		if(check->child1 == NULL) {
 			return false;
 		}
-		return avl_tree_node_present(check->child1, value);
+		return avl_present(check->child1, value);
 	}
 	
 	if(check->child2 == NULL) {
 		return false;
 	}
-	return avl_tree_node_present(check->child2, value);
+	return avl_present(check->child2, value);
 }
 
 
@@ -292,7 +292,7 @@ void avl_print(tree_t *tree, transversal_e transversal) {
 tree_ops_t avl_ops = {
 	.create = avl_create,
 	.destroy = avl_destroy,
-	.insert = avl_insert_node,
+	.insert = avl_insert,
 	.remove = avl_remove,
 	.pop = avl_pop,
 	.depth = avl_depth,
