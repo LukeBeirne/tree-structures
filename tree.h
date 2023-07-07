@@ -1,6 +1,7 @@
 #ifndef TREE_H
 #define TREE_H
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 
@@ -36,14 +37,14 @@ typedef int (*compare_func)(void *, void *);
 
 typedef struct tree tree_t;
 
-typedef tree_t *(*create_op)(void *, int);
-typedef void (*destroy_op)(void *);
-typedef void (*insert_op)(void *, int);
-typedef void (*remove_op)(void *, int);
-typedef void (*pop_op)(void *);
-typedef int (*depth_op)(void *);
-typedef bool (*present_op)(void *, int);
-typedef void (*print_op)(void *, transversal_e);
+typedef tree_t *(*create_op)(tree_t *, int);
+typedef void (*destroy_op)(tree_t *);
+typedef void (*insert_op)(tree_t *, int);
+typedef void (*remove_op)(tree_t *, int);
+typedef void (*pop_op)(tree_t *);
+typedef int (*depth_op)(tree_t *);
+typedef bool (*present_op)(tree_t *, int);
+typedef void (*print_op)(tree_t *, transversal_e);
 
 
 
@@ -117,7 +118,7 @@ void destroy_tree(tree_t *tree) {
 }
 
 //returns true if input tree is NULL
-bool empty(tree_t *tree) {
+bool tree_empty(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return true;
@@ -130,7 +131,7 @@ bool empty(tree_t *tree) {
 }
 
 //returns 0 if input tree is NULL
-int get_num_elements(tree_t *tree) {
+int tree_get_num_elements(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return 0;
@@ -144,7 +145,7 @@ int get_num_elements(tree_t *tree) {
  */
 
 //for non-heap trees it does nothing if inserted value already exists
-static inline void insert_node(tree_t *tree, int value) {
+static inline void tree_insert_node(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -154,7 +155,7 @@ static inline void insert_node(tree_t *tree, int value) {
 }
 
 //does nothing if value to be removed does not exist
-static inline void remove_node(tree_t *tree, int value) {
+static inline void tree_remove_node(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -163,7 +164,7 @@ static inline void remove_node(tree_t *tree, int value) {
 	tree->ops->remove(tree, value);
 }
 
-static inline void pop(tree_t *tree) {
+static inline void tree_pop(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -173,7 +174,7 @@ static inline void pop(tree_t *tree) {
 }
 
 //returns 0 if input tree is NULL
-static inline int depth(tree_t *tree) {
+static inline int tree_depth(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return 0;
@@ -183,7 +184,7 @@ static inline int depth(tree_t *tree) {
 }
 
 //returns false if input tree is NULL
-static inline bool present(tree_t *tree, int value) {
+static inline bool tree_node_present(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return false;
@@ -194,7 +195,7 @@ static inline bool present(tree_t *tree, int value) {
 
 //transversal value is ignored for heap trees
 //prints "NULL" if input tree is empty
-static inline void print(tree_t *tree, transversal_e transversal) {
+static inline void tree_print(tree_t *tree, transversal_e transversal) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;

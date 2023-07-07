@@ -2,18 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
-#include "binary.h"
-#include "heap.h"
-#include "avl.h"
 
 #define valid_tree_type(t) \
 	(t) >= inorder && (t) < invalid_transversal
-
-
-
-/*
-implement avl functions
-*/
 
 
 

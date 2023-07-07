@@ -139,7 +139,7 @@ void heap_pop(tree_t *tree) {
 	
 }
 
-void heap_remove(tree_t *tree) {
+void heap_remove(tree_t *tree, int value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -189,7 +189,7 @@ bool heap_present(tree_t *tree, int value) {
 }
 
 
-void heap_print(tree_t *tree) {	
+void heap_print(tree_t *tree, transversal_e transversal) {	
 	if(tree->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return;

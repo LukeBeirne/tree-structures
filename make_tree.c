@@ -30,11 +30,11 @@ int main(int argc, char *argv[]) {
 	tree_t *emptytree = create_tree(binary, NULL, 0);
 	
 	//insert root into tree
-	insert_node(tree, value);
+	tree_insert_node(tree, value);
 	
 	//print trees with only root value
-	print_tree(tree, inorder);
-	print_tree(emptytree, inorder);
+	tree_print(tree, inorder);
+	tree_print(emptytree, inorder);
 	
 	//test emptiness
 	if(tree_empty(tree)) {
@@ -70,18 +70,18 @@ int main(int argc, char *argv[]) {
 	for(int i = 0; i < 5; i++) {
 		insertvalue = rand() % upbound;
 		printf("Inserting value %d into tree\n", insertvalue);
-		insert_node(tree, insertvalue);
+		tree_insert_node(tree, insertvalue);
 	}
 	
 	//print new tree with various orders
 	printf("Tree contents inorder:\n");
-	print_tree(tree, inorder);
+	tree_print(tree, inorder);
 	
 	printf("Tree contents preorder:\n");
-	print_tree(tree, preorder);
+	tree_print(tree, preorder);
 	
 	printf("Tree contents postorder:\n");
-	print_tree(tree, postorder);
+	tree_print(tree, postorder);
 	
 	//test new depth
 	printf("Tree depth is %d\n", tree_depth(tree));
@@ -107,17 +107,17 @@ int main(int argc, char *argv[]) {
 	//test removing value
 	int removevalue = 40;
 	printf("Removing value %d from tree\n", removevalue);
-	remove_node(tree, removevalue);
+	tree_remove_node(tree, removevalue);
 	
 	//re-print tree
 	printf("Tree contents inorder:\n");
-	print_tree(tree, inorder);
+	tree_print(tree, inorder);
 	
 	printf("Tree contents preorder:\n");
-	print_tree(tree, preorder);
+	tree_print(tree, preorder);
 	
 	printf("Tree contents postorder:\n");
-	print_tree(tree, postorder);
+	tree_print(tree, postorder);
 	
 	//test new depth
 	printf("Tree depth is %d\n", tree_depth(tree));
@@ -145,11 +145,11 @@ int main(int argc, char *argv[]) {
 	tree_t *emptyheap = create_tree(heap, NULL, 10);
 	
 	//insert root into tree
-	insert_node(heaptree, rootvalue);
+	tree_insert_node(heaptree, rootvalue);
 	
 	//print trees with only root value
-	print_tree(heaptree, inorder);
-	print_tree(emptyheap, inorder);
+	tree_print(heaptree, inorder);
+	tree_print(emptyheap, inorder);
 	
 	//test emptiness
 	if(tree_empty(heaptree)) {
@@ -184,12 +184,12 @@ int main(int argc, char *argv[]) {
 	for(int i = 0; i < 5; i++) {
 		insertvalue = rand() % upbound;
 		printf("Inserting value %d into heap\n", insertvalue);
-		insert_node(heaptree, insertvalue);
+		tree_insert_node(heaptree, insertvalue);
 	}
 	
 	//print new heap
 	printf("Heap contents:\n");
-	print_tree(heaptree, inorder);
+	tree_print(heaptree, inorder);
 	
 	//test new depth
 	printf("Heap depth is %d\n", tree_depth(heaptree));
@@ -206,11 +206,11 @@ int main(int argc, char *argv[]) {
 	//test removing last element
 	removevalue = 10;
 	printf("Removing value %d from heap\n", removevalue);
-	remove_node(heaptree, removevalue);
+	tree_remove_node(heaptree, removevalue);
 	
 	//print new heap
 	printf("Heap contents after removing last inserted value:\n");
-	print_tree(heaptree, inorder);
+	tree_print(heaptree, inorder);
 	
 	//test new num elements
 	printf("%d elements in heap\n", tree_get_num_elements(heaptree));
@@ -218,11 +218,11 @@ int main(int argc, char *argv[]) {
 	//test removing root value
 	removevalue = 81;
 	printf("Removing value %d from heap\n", removevalue);
-	remove_node(heaptree, removevalue);
+	tree_remove_node(heaptree, removevalue);
 	
 	//print new heap
 	printf("Heap contents after removing root value:\n");
-	print_tree(heaptree, inorder);
+	tree_print(heaptree, inorder);
 	
 	//test new num elements
 	printf("%d elements in heap\n", tree_get_num_elements(heaptree));

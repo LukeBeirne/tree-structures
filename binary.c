@@ -49,7 +49,7 @@ static void destroy_node(node_t *node) {
  * binary tree function definitions
  */
 
-tree_t *binary_create(tree_t *tree) {
+tree_t *binary_create(tree_t *tree, int heap_size) {
 	return tree;
 }
 
@@ -60,7 +60,7 @@ void binary_destroy(tree_t *tree) {
 }
 
 
-node_t *binary_insert(node_t *check, int value, bool *present) {
+static node_t *binary_insert_impl(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return create_node(value);
 	}
@@ -75,15 +75,26 @@ node_t *binary_insert(node_t *check, int value, bool *present) {
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = binary_insert(check->child1, value, present);
+		check->child1 = binary_insert_impl(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = binary_insert(check->child2, value, present);
+		check->child2 = binary_insert_impl(check->child2, value, present);
 	}
 	
 	return check;
+}
+
+void binary_insert(tree_t *tree, int value) {
+	
+	bool present = false;
+	
+	tree->root = binary_insert_impl(tree->root, value, &present);
+	
+	if(!present) {
+		tree->num_elements += 1;
+	}
 }
 
 
@@ -98,7 +109,7 @@ static node_t *find_left_leaf(node_t *node) {
 	
 }
 
-node_t *binary_remove(node_t *check, int value, bool *present) {
+node_t *binary_remove_impl(node_t *check, int value, bool *present) {
 	if(check == NULL) {
 		return NULL;
 	}
@@ -133,38 +144,57 @@ node_t *binary_remove(node_t *check, int value, bool *present) {
 		} else {
 			node_t *leaf = find_left_leaf(check->child2);
 			check->value = leaf->value;
-			check->child2 = binary_remove(check->child2, check->value, present);
+			check->child2 = binary_remove_impl(check->child2, check->value, present);
 			return check;
 		}
 	}
 	
 	if(value < nodeval) {
 		//left child
-		check->child1 = binary_remove(check->child1, value, present);
+		check->child1 = binary_remove_impl(check->child1, value, present);
 	}
 	
 	if(value > nodeval) {
 		//right child
-		check->child2 = binary_remove(check->child2, value, present);
+		check->child2 = binary_remove_impl(check->child2, value, present);
 	}
 	
 	return check;
 }
 
-void binary_pop(tree_t *tree) {
+void binary_remove(tree_t *tree, int value) {
+	
 	bool present = false;
-	binary_remove(tree->root, tree->root->value, &present);
+	
+	tree->root = binary_remove_impl(tree->root, value, &present);
+	
+	if(present) {
+		tree->num_elements -= 1;
+	}
+}
+
+void binary_pop(tree_t *tree) {
+	if(tree->num_elements == 0) {
+		fprintf(stderr, "Cannot pop empty tree\n");
+		return;
+	}
+	
+	bool present = false;
+	
+	binary_remove_impl(tree->root, tree->root->value, &present);
+	
+	tree->num_elements -= 1;
 }
 
 
-int binary_depth(node_t *node) {	
+int binary_depth_impl(node_t *node) {	
 	if(node == NULL) {
 		return 0;
 	}
 	
 	
-	int left = binary_depth(node->child1);
-	int right = binary_depth(node->child2);
+	int left = binary_depth_impl(node->child1);
+	int right = binary_depth_impl(node->child2);
 	
 	if(left > right) {
 		return left + 1;
@@ -172,12 +202,12 @@ int binary_depth(node_t *node) {
 	return right + 1;
 }
 
+int binary_depth(tree_t *tree) {
+	return binary_depth_impl(tree->root);
+}
 
-bool binary_present(node_t *check, int value) {
-	//case where tree is empty
-	if(check == NULL) {
-		return false;
-	}
+
+bool binary_present_impl(node_t *check, int value) {
 	
 	int checkval = check->value;
 	
@@ -189,13 +219,21 @@ bool binary_present(node_t *check, int value) {
 		if(check->child1 == NULL) {
 			return false;
 		}
-		return binary_present(check->child1, value);
+		return binary_present_impl(check->child1, value);
 	}
 	
 	if(check->child2 == NULL) {
 		return false;
 	}
-	return binary_present(check->child2, value);
+	return binary_present_impl(check->child2, value);
+}
+
+bool binary_present(tree_t *tree, int value) {
+	if(tree->num_elements == 0) {
+		return false;
+	}
+	
+	return binary_present_impl(tree->root, value);
 }
 
 
