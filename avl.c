@@ -56,7 +56,6 @@ tree_t *avl_create(tree_t *tree, int heap_size) {
 void avl_destroy(tree_t *tree) {
 	//destroy_node function traverses through tree to destroy each node
 	destroy_node(tree->root);
-	free(tree);
 }
 
 

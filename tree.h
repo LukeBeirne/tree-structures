@@ -87,7 +87,7 @@ extern tree_ops_t avl_ops;
 
 //heap_size is used to mark the number of elements in a heap tree
 //the size value is ignored for all non-heap tree types
-tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
+static inline tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
 	tree_t *tree = (tree_t *)calloc(1, sizeof(tree_t));
 	tree->compare_fp = c_func;
 	tree->type = type;
@@ -111,14 +111,20 @@ tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
 	return tree;
 }
 
-void destroy_tree(tree_t *tree) {
+static inline void destroy_tree(tree_t *tree) {
+	if(tree == NULL) {
+		fprintf(stderr, "Tree pointer is NULL\n");
+		return;
+	}
+	
+	
 	tree->ops->destroy(tree);
 	
 	free(tree);
 }
 
 //returns true if input tree is NULL
-bool tree_empty(tree_t *tree) {
+static inline bool tree_empty(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return true;
@@ -131,7 +137,7 @@ bool tree_empty(tree_t *tree) {
 }
 
 //returns 0 if input tree is NULL
-int tree_get_num_elements(tree_t *tree) {
+static inline int tree_get_num_elements(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return 0;
@@ -139,6 +145,8 @@ int tree_get_num_elements(tree_t *tree) {
 	
 	return tree->num_elements;
 }
+
+
 
 /*
  * static inline tree struct function declarations
