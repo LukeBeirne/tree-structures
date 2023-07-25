@@ -129,12 +129,14 @@ node_t *avl_remove_impl(node_t *check, int value, bool *present) {
 			//case for left child
 			if(check->child1 != NULL) {
 				node_t *temp = check->child1;
+				check->child1 = NULL;
 				destroy_node(check);
 				return temp;
 				
 			//case for right child
 			} else {
 				node_t *temp = check->child2;
+				check->child2 = NULL;
 				destroy_node(check);
 				return temp;
 			}
@@ -292,14 +294,14 @@ void avl_print(tree_t *tree, transversal_e transversal) {
 		return;
 	}
 	
+	
 	//check for empty tree
 	if(tree->root == NULL) {
 		printf("NULL\n");
 		return;
 	}
-			
-	//transversal switch case for
-	//avl tree
+	
+	
 	switch(transversal) {
 		case inorder:
 			print_tree_inorder(tree->root);

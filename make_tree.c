@@ -235,5 +235,119 @@ int main(int argc, char *argv[]) {
 	destroy_tree(heaptree);
 	destroy_tree(emptyheap);
 	
+	
+	/*
+	 *
+	 * AVL TREE TESTING *******************************************************
+	 *
+	 */
+	printf("--------AVL TREE TESTING--------\n");
+	
+	
+	
+	//creating trees
+	printf("Creating tree with %d as root\n", value);
+	tree_t *avltree = create_tree(avl, NULL, 0);
+	tree_t *emptyavltree = create_tree(avl, NULL, 0);
+	
+	//insert root into tree
+	tree_insert_node(avltree, value);
+	
+	//print trees with only root value
+	tree_print(avltree, inorder);
+	tree_print(emptyavltree, inorder);
+	
+	//test emptiness
+	if(tree_empty(avltree)) {
+		printf("The tree is empty\n");
+	}
+	else {
+		printf("The tree is not empty\n");
+	}
+	
+	if(tree_empty(emptyavltree)) {
+		printf("The tree is empty\n");
+	}
+	else {
+		printf("The tree is not empty\n");
+	}
+	
+	//test depth
+	printf("Tree depth is %d\n", tree_depth(avltree));
+	printf("Empty tree depth is %d\n", tree_depth(emptyavltree));
+	
+	//test num elements
+	printf("%d elements in tree\n", tree_get_num_elements(avltree));
+	printf("%d elements in empty tree\n", tree_get_num_elements(emptyavltree));
+	
+	//test node present using root value
+	if(tree_node_present(avltree, value)) {
+		printf("Value %d present in tree\n", value);
+	}
+	else printf("Value %d not present in tree\n", value);
+	
+	//insert values
+	for(int i = 0; i < 5; i++) {
+		insertvalue = rand() % upbound;
+		printf("Inserting value %d into tree\n", insertvalue);
+		tree_insert_node(avltree, insertvalue);
+	}
+	
+	//print new tree with various orders
+	printf("Tree contents inorder:\n");
+	tree_print(avltree, inorder);
+	
+	printf("Tree contents preorder:\n");
+	tree_print(avltree, preorder);
+	
+	printf("Tree contents postorder:\n");
+	tree_print(avltree, postorder);
+	
+	//test new depth
+	printf("Tree depth is %d\n", tree_depth(avltree));
+	
+	//test new num elements
+	printf("%d elements in tree\n", tree_get_num_elements(avltree));
+	
+	//test node present using last inserted value
+	if(tree_node_present(avltree, insertvalue)) {
+		printf("Value %d present in tree\n", insertvalue);
+	} 
+	else {
+		printf("Value %d not present in tree\n", insertvalue);
+	}
+	
+	if(tree_node_present(avltree, 101)) {
+		printf("Value %d present in tree\n", 101);
+	}
+	else {
+		printf("Value %d not present in tree\n", 101);
+	}
+	
+	//test removing value
+	removevalue = 40;
+	printf("Removing value %d from tree\n", removevalue);
+	tree_remove_node(avltree, removevalue);
+	
+	//re-print tree
+	printf("Tree contents inorder:\n");
+	tree_print(avltree, inorder);
+	
+	printf("Tree contents preorder:\n");
+	tree_print(avltree, preorder);
+	
+	printf("Tree contents postorder:\n");
+	tree_print(avltree, postorder);
+	
+	//test new depth
+	printf("Tree depth is %d\n", tree_depth(avltree));
+	
+	//test new num elements
+	printf("%d elements in tree\n", tree_get_num_elements(avltree));
+	
+	//destroy binary trees
+	destroy_tree(avltree);
+	destroy_tree(emptyavltree);
+	
 	return(0);
 }
