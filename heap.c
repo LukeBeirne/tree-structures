@@ -9,22 +9,31 @@
 
 #define PARENT(index) (((index)-1)>>1)
 
+#define GET_PRIV(t) \
+	(heap_priv_t *)((t)->priv)
+
+typedef struct heap_priv {
+	int heap_size;
+	void **heap_array;
+} heap_priv_t;
 
 /*
  * heap tree function definitions
  */
 
 static void heapify_up(tree_t *tree, int index) {
-	int indexval = (tree->heap_array)[index];
-	int parentval;
-	int tmp;
+	void *indexval = (GET_PRIV(tree))->heap_array[index];
+	void *parentval;
+	void *tmp;
 	
-	parentval = (tree->heap_array)[PARENT(index)];
+	parentval = (GET_PRIV(tree))->heap_array[PARENT(index)];
 	
-	if(parentval < indexval) {
+	int comp = tree->compare_fp(parentval, indexval);
+	
+	if(comp == -1) {
 		tmp = parentval;
-		(tree->heap_array)[PARENT(index)] = indexval;
-		(tree->heap_array)[index] = tmp;
+		(GET_PRIV(tree))->heap_array[PARENT(index)] = indexval;
+		(GET_PRIV(tree))->heap_array[index] = tmp;
 	}
 	else 
 		return;
@@ -37,23 +46,23 @@ static void heapify_up(tree_t *tree, int index) {
 }
 
 static void heapify_down(tree_t *tree, int index) {
-	int indexval = (tree->heap_array)[index];
+	void *indexval = (GET_PRIV(tree))->heap_array[index];
 	
-	int child1val;
-	int child2val;
+	void *child1val;
+	void *child2val;
 	
-	int tmp;
+	void *tmp;
 	
 	bool child1exists = false;
 	bool child2exists = false;
 	
 	if((LEFTCHILD(index) < tree->num_elements)) {
 		child1exists = true;
-		child1val = (tree->heap_array)[LEFTCHILD(index)];
+		child1val = (GET_PRIV(tree))->heap_array[LEFTCHILD(index)];
 	}
 	if(RIGHTCHILD(index) < tree->num_elements) {
 		child2exists = true;
-		child2val = (tree->heap_array)[RIGHTCHILD(index)];
+		child2val = (GET_PRIV(tree))->heap_array[RIGHTCHILD(index)];
 	}
 	
 	//if no child exists
@@ -64,30 +73,31 @@ static void heapify_down(tree_t *tree, int index) {
 	if(child1exists ^ child2exists) {
 		if(child1exists) {
 			tmp = child1val;
-			(tree->heap_array)[LEFTCHILD(index)] = indexval;
-			(tree->heap_array)[index] = tmp;
+			(GET_PRIV(tree))->heap_array[LEFTCHILD(index)] = indexval;
+			(GET_PRIV(tree))->heap_array[index] = tmp;
 			heapify_down(tree, LEFTCHILD(index));
 		}
 		else {
 			tmp = child2val;
-			(tree->heap_array)[RIGHTCHILD(index)] = indexval;
-			(tree->heap_array)[index] = tmp;
+			(GET_PRIV(tree))->heap_array[RIGHTCHILD(index)] = indexval;
+			(GET_PRIV(tree))->heap_array[index] = tmp;
 			heapify_down(tree, RIGHTCHILD(index));
 		}
 	}
 	
 	//both children exist
 	else {
-		if(child1val > child2val) {
+		int comp = tree->compare_fp(child1val, child2val);
+		if(comp == 1) {
 			tmp = child1val;
-			(tree->heap_array)[LEFTCHILD(index)] = indexval;
-			(tree->heap_array)[index] = tmp;
+			(GET_PRIV(tree))->heap_array[LEFTCHILD(index)] = indexval;
+			(GET_PRIV(tree))->heap_array[index] = tmp;
 			heapify_down(tree, LEFTCHILD(index));
 		}
 		else {
 			tmp = child2val;
-			(tree->heap_array)[RIGHTCHILD(index)] = indexval;
-			(tree->heap_array)[index] = tmp;
+			(GET_PRIV(tree))->heap_array[RIGHTCHILD(index)] = indexval;
+			(GET_PRIV(tree))->heap_array[index] = tmp;
 			heapify_down(tree, RIGHTCHILD(index));
 		}
 	}
@@ -96,29 +106,33 @@ static void heapify_down(tree_t *tree, int index) {
 
 
 tree_t *heap_create(tree_t *tree, int heap_size) {
-	tree->heap_array = (char *)malloc(heap_size*sizeof(int));
-	tree->heap_size = heap_size;
+	tree->priv = (heap_priv_t *)malloc(sizeof(heap_priv_t));
+	(GET_PRIV(tree))->heap_size = heap_size;
+	(GET_PRIV(tree))->heap_array = (void **)malloc(heap_size*sizeof(void *));
+	//tree->heap_array = (char *)malloc(heap_size*sizeof(int));
+	//tree->heap_size = heap_size;
 	return tree;
 }
 
 void heap_destroy(tree_t *tree) {
-	free(tree->heap_array);
+	free((GET_PRIV(tree))->heap_array);
 }
 
 
 void heap_insert_node(tree_t *tree, void *value) {
-	if(tree->heap_array == NULL) {
+	if((GET_PRIV(tree))->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return;
 	}
 	
-	if(tree->num_elements == tree->heap_size) {
+	if(tree->num_elements == (GET_PRIV(tree))->heap_size) {
 		fprintf(stderr, "Heap at capacity, returning without insert\n");
 		return;
 	}
 	
+	(GET_PRIV(tree))->heap_array[tree->num_elements] = value;
 	//tree->heap_array + (tree->num_elements)*tree->type_size
-	memcpy(tree->heap_array + (tree->num_elements)*tree->type_size, value, tree->type_size);
+	//memcpy(tree->heap_array + (tree->num_elements)*tree->type_size, value, tree->type_size);
 	//(tree->heap_array)[tree->num_elements] = value;
 	
 	tree->num_elements += 1;
@@ -135,7 +149,7 @@ void heap_pop(tree_t *tree) {
 		return;
 	}
 	
-	(tree->heap_array)[0] = (tree->heap_array)[tree->num_elements-1];
+	(GET_PRIV(tree))->heap_array[0] = (GET_PRIV(tree))->heap_array[tree->num_elements-1];
 	tree->num_elements -= 1;
 	heapify_down(tree, 0);
 	
@@ -160,7 +174,7 @@ void heap_remove(tree_t *tree, void *value) {
  * https://www.geeksforgeeks.org/height-complete-heap-tree-heap-n-nodes/
  */
 int heap_depth(tree_t *tree) {	
-	if(tree->heap_array == NULL) {
+	if((GET_PRIV(tree))->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return 0;
 	}
@@ -175,7 +189,7 @@ int heap_depth(tree_t *tree) {
 
 
 bool heap_present(tree_t *tree, void *value) {
-	if(tree->heap_array == NULL) {
+	if((GET_PRIV(tree))->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return false;
 	}
@@ -183,7 +197,7 @@ bool heap_present(tree_t *tree, void *value) {
 	
 	void *check;
 	for(int i = 0; i < tree->num_elements; i++) {
-		memcpy(check, tree->heap_array + i*tree->type_size, tree->type_size);
+		check = (GET_PRIV(tree))->heap_array[i];
 		if(tree->compare_fp(check, value) == 0) {
 			return true;
 		}
@@ -194,7 +208,7 @@ bool heap_present(tree_t *tree, void *value) {
 
 
 void heap_print(tree_t *tree, transversal_e transversal) {	
-	if(tree->heap_array == NULL) {
+	if((GET_PRIV(tree))->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return;
 	}
@@ -206,7 +220,7 @@ void heap_print(tree_t *tree, transversal_e transversal) {
 	}
 	
 	for(int i = 0; i < tree->num_elements; i++) {
-		printf("%d\n", (tree->heap_array)[i]);
+		tree->print_fp((GET_PRIV(tree))->heap_array[i]);
 	}
 	
 }

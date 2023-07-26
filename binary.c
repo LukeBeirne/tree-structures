@@ -6,6 +6,8 @@
 #define valid_tree_type(t) \
 	(t) >= inorder && (t) < invalid_transversal
 
+#define GET_PRIV(t) \
+	(node_t *)((t)->priv)
 
 
 struct node {
@@ -50,13 +52,9 @@ static void destroy_node(node_t *node) {
  * binary tree function definitions
  */
 
-tree_t *binary_create(tree_t *tree, int heap_size) {
-	return tree;
-}
-
 void binary_destroy(tree_t *tree) {
 	//destroy_node function traverses through tree to destroy each node
-	destroy_node(tree->root);
+	destroy_node(GET_PRIV(tree));
 }
 
 
@@ -90,7 +88,7 @@ void binary_insert(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
-	tree->root = binary_insert_impl(tree, tree->root, value, &present);
+	tree->priv = binary_insert_impl(tree, GET_PRIV(tree), value, &present);
 	
 	if(!present) {
 		tree->num_elements += 1;
@@ -172,7 +170,7 @@ void binary_remove(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
-	tree->root = binary_remove_impl(tree, tree->root, value, &present);
+	tree->priv = binary_remove_impl(tree, GET_PRIV(tree), value, &present);
 	
 	if(present) {
 		tree->num_elements -= 1;
@@ -187,7 +185,7 @@ void binary_pop(tree_t *tree) {
 	
 	bool present = false;
 	
-	binary_remove_impl(tree, tree->root, tree->root->value, &present);
+	binary_remove_impl(tree, GET_PRIV(tree), (GET_PRIV(tree))->value, &present);
 	
 	tree->num_elements -= 1;
 }
@@ -209,7 +207,7 @@ int binary_depth_impl(node_t *node) {
 }
 
 int binary_depth(tree_t *tree) {
-	return binary_depth_impl(tree->root);
+	return binary_depth_impl(GET_PRIV(tree));
 }
 
 
@@ -243,7 +241,7 @@ bool binary_present(tree_t *tree, void *value) {
 		return false;
 	}
 	
-	return binary_present_impl(tree, tree->root, value);
+	return binary_present_impl(tree, GET_PRIV(tree), value);
 }
 
 
@@ -313,7 +311,7 @@ void binary_print(tree_t *tree, transversal_e transversal) {
 	
 	
 	//check for empty tree
-	if(tree->root == NULL) {
+	if(GET_PRIV(tree) == NULL) {
 		printf("NULL\n");
 		return;
 	}
@@ -321,13 +319,13 @@ void binary_print(tree_t *tree, transversal_e transversal) {
 	
 	switch(transversal) {
 		case inorder:
-			print_tree_inorder(tree, tree->root);
+			print_tree_inorder(tree, GET_PRIV(tree));
 			break;
 		case preorder:
-			print_tree_preorder(tree, tree->root);
+			print_tree_preorder(tree, GET_PRIV(tree));
 			break;
 		case postorder:
-			print_tree_postorder(tree, tree->root);
+			print_tree_postorder(tree, GET_PRIV(tree));
 			break;
 		default:
 			fprintf(stderr, "Invalid transversal in print_tree function\n");
@@ -338,7 +336,7 @@ void binary_print(tree_t *tree, transversal_e transversal) {
 
 
 tree_ops_t binary_ops = {
-	.create = binary_create,
+	.create = NULL,
 	.destroy = binary_destroy,
 	.insert = binary_insert,
 	.remove = binary_remove,

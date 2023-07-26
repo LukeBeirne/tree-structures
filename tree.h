@@ -38,11 +38,12 @@ typedef int (*compare_func)(void *, void *);
 
 typedef struct tree tree_t;
 
+//incorporate return values
 typedef tree_t *(*create_op)(tree_t *, int);
-typedef void (*destroy_op)(tree_t *);
-typedef void (*insert_op)(tree_t *, void *);
-typedef void (*remove_op)(tree_t *, void *);
-typedef void (*pop_op)(tree_t *);
+typedef void (*destroy_op)(tree_t *); //int
+typedef void (*insert_op)(tree_t *, void *); //int
+typedef void (*remove_op)(tree_t *, void *); //void *, return the removed value
+typedef void (*pop_op)(tree_t *); //void *
 typedef int (*depth_op)(tree_t *);
 typedef bool (*present_op)(tree_t *, void *);
 typedef void (*print_op)(tree_t *, transversal_e);
@@ -67,12 +68,10 @@ typedef struct tree_ops {
 }tree_ops_t;
 
 struct tree {
-	node_t *root;
+	void *priv;
 	tree_e type;
 	size_t type_size;
 	int num_elements;
-	int heap_size;
-	char *heap_array;
 	compare_func compare_fp;
 	print_func print_fp;
 	tree_ops_t *ops;
@@ -93,6 +92,7 @@ extern tree_ops_t avl_ops;
 static inline tree_t *create_tree(tree_e type, size_t elem_size, compare_func c_func, print_func p_func, int heap_size) {
 	tree_t *tree = (tree_t *)calloc(1, sizeof(tree_t));
 	tree->type = type;
+	//remove type_size
 	tree->type_size = elem_size;
 	tree->compare_fp = c_func;
 	tree->print_fp = p_func;
