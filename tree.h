@@ -33,17 +33,18 @@ typedef void (*traversal_func)(void *);
 0 for equal
 1 for first input > second input
 */
+typedef void (*print_func)(void *);
 typedef int (*compare_func)(void *, void *);
 
 typedef struct tree tree_t;
 
 typedef tree_t *(*create_op)(tree_t *, int);
 typedef void (*destroy_op)(tree_t *);
-typedef void (*insert_op)(tree_t *, int);
-typedef void (*remove_op)(tree_t *, int);
+typedef void (*insert_op)(tree_t *, void *);
+typedef void (*remove_op)(tree_t *, void *);
 typedef void (*pop_op)(tree_t *);
 typedef int (*depth_op)(tree_t *);
-typedef bool (*present_op)(tree_t *, int);
+typedef bool (*present_op)(tree_t *, void *);
 typedef void (*print_op)(tree_t *, transversal_e);
 
 
@@ -68,10 +69,12 @@ typedef struct tree_ops {
 struct tree {
 	node_t *root;
 	tree_e type;
+	size_t type_size;
 	int num_elements;
 	int heap_size;
-	int *heap_array;
+	char *heap_array;
 	compare_func compare_fp;
+	print_func print_fp;
 	tree_ops_t *ops;
 };
 
@@ -87,10 +90,12 @@ extern tree_ops_t avl_ops;
 
 //heap_size is used to mark the number of elements in a heap tree
 //the size value is ignored for all non-heap tree types
-static inline tree_t *create_tree(tree_e type, compare_func c_func, int heap_size) {
+static inline tree_t *create_tree(tree_e type, size_t elem_size, compare_func c_func, print_func p_func, int heap_size) {
 	tree_t *tree = (tree_t *)calloc(1, sizeof(tree_t));
-	tree->compare_fp = c_func;
 	tree->type = type;
+	tree->type_size = elem_size;
+	tree->compare_fp = c_func;
+	tree->print_fp = p_func;
 	
 	switch(type) {
 		case binary:
@@ -153,7 +158,7 @@ static inline int tree_get_num_elements(tree_t *tree) {
  */
 
 //for non-heap trees it does nothing if inserted value already exists
-static inline void tree_insert_node(tree_t *tree, int value) {
+static inline void tree_insert_node(tree_t *tree, void *value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -163,7 +168,7 @@ static inline void tree_insert_node(tree_t *tree, int value) {
 }
 
 //does nothing if value to be removed does not exist
-static inline void tree_remove_node(tree_t *tree, int value) {
+static inline void tree_remove_node(tree_t *tree, void *value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -192,7 +197,7 @@ static inline int tree_depth(tree_t *tree) {
 }
 
 //returns false if input tree is NULL
-static inline bool tree_node_present(tree_t *tree, int value) {
+static inline bool tree_node_present(tree_t *tree, void *value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return false;

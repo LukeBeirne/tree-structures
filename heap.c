@@ -96,7 +96,7 @@ static void heapify_down(tree_t *tree, int index) {
 
 
 tree_t *heap_create(tree_t *tree, int heap_size) {
-	tree->heap_array = (int *)malloc(heap_size*sizeof(int));
+	tree->heap_array = (char *)malloc(heap_size*sizeof(int));
 	tree->heap_size = heap_size;
 	return tree;
 }
@@ -106,7 +106,7 @@ void heap_destroy(tree_t *tree) {
 }
 
 
-void heap_insert_node(tree_t *tree, int value) {
+void heap_insert_node(tree_t *tree, void *value) {
 	if(tree->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return;
@@ -117,7 +117,9 @@ void heap_insert_node(tree_t *tree, int value) {
 		return;
 	}
 	
-	(tree->heap_array)[tree->num_elements] = value;
+	//tree->heap_array + (tree->num_elements)*tree->type_size
+	memcpy(tree->heap_array + (tree->num_elements)*tree->type_size, value, tree->type_size);
+	//(tree->heap_array)[tree->num_elements] = value;
 	
 	tree->num_elements += 1;
 	
@@ -139,7 +141,7 @@ void heap_pop(tree_t *tree) {
 	
 }
 
-void heap_remove(tree_t *tree, int value) {
+void heap_remove(tree_t *tree, void *value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
 		return;
@@ -172,15 +174,17 @@ int heap_depth(tree_t *tree) {
 }
 
 
-bool heap_present(tree_t *tree, int value) {
+bool heap_present(tree_t *tree, void *value) {
 	if(tree->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
 		return false;
 	}
 	
 	
+	void *check;
 	for(int i = 0; i < tree->num_elements; i++) {
-		if((tree->heap_array)[i] == value) {
+		memcpy(check, tree->heap_array + i*tree->type_size, tree->type_size);
+		if(tree->compare_fp(check, value) == 0) {
 			return true;
 		}
 	}

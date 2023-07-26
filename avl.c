@@ -9,7 +9,7 @@
 
 
 struct node {
-	int value;
+	void *value;
 	node_t *child1;
 	node_t *child2;
 };
@@ -19,9 +19,10 @@ struct node {
  * node struct function definitions
  */
 
-static node_t *create_node(int value) {
+static node_t *create_node(tree_t *tree, void *value) {
 	node_t *node = (node_t *)malloc(sizeof(node_t));
-	node->value = value;
+	memcpy(node->value, value, tree->type_size);
+	//node->value = value;
 	node->child1 = NULL;
 	node->child2 = NULL;
 	return node;
@@ -59,37 +60,37 @@ void avl_destroy(tree_t *tree) {
 }
 
 
-node_t *avl_insert_impl(node_t *check, int value, bool *present) {
+static node_t *avl_insert_impl(tree_t *tree, node_t *check, void *value, bool *present) {
 	if(check == NULL) {
-		return create_node(value);
+		return create_node(tree, value);
 	}
 	
+	int comp = tree->compare_fp(check->value, value);
 	
-	int nodeval = check->value;
-	
-	if(nodeval == value) {
-		printf("Value %d already present in tree\n", value);
-		*present = true;
-	}
-	
-	if(value < nodeval) {
-		//left child
-		check->child1 = avl_insert_impl(check->child1, value, present);
-	}
-	
-	if(value > nodeval) {
-		//right child
-		check->child2 = avl_insert_impl(check->child2, value, present);
+	switch(comp) {
+		case 0:
+			printf("Inserted value already present in tree\n");
+			*present = true;
+			break;
+		case 1:
+			check->child1 = avl_insert_impl(tree, check->child1, value, present);
+			break;
+		case -1:
+			check->child2 = avl_insert_impl(tree, check->child2, value, present);
+			break;
+		default:
+			fprintf(stderr, "Compare function returns invalid value\n");
+			break;
 	}
 	
 	return check;
 }
 
-void avl_insert(tree_t *tree, int value) {
+void avl_insert(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
-	tree->root = avl_insert_impl(tree->root, value, &present);
+	tree->root = avl_insert_impl(tree, tree->root, value, &present);
 	
 	if(!present) {
 		tree->num_elements += 1;
@@ -108,66 +109,70 @@ static node_t *find_left_leaf(node_t *node) {
 	
 }
 
-node_t *avl_remove_impl(node_t *check, int value, bool *present) {
+node_t *avl_remove_impl(tree_t *tree, node_t *check, void *value, bool *present) {
 	if(check == NULL) {
 		return NULL;
 	}
 	
 	
-	int nodeval = check->value;
+	int comp = tree->compare_fp(check->value, value);
 	
-	if(nodeval == value) {
-		*present = true;
-		//node to be removed has no children
-		if(check->child1 == NULL && check->child2 == NULL) {
-			destroy_node(check);
-			return NULL;
+	switch(comp) {
+		case 0:
+			*present = true;
+			//node to be removed has no children
+			if(check->child1 == NULL && check->child2 == NULL) {
+				destroy_node(check);
+				return NULL;
 		
-		//node to be removed has one child
-		} else if((check->child1 != NULL) ^ (check->child2 != NULL)) {
+			//node to be removed has one child
+			} else if((check->child1 != NULL) ^ (check->child2 != NULL)) {
 			
-			//case for left child
-			if(check->child1 != NULL) {
-				node_t *temp = check->child1;
-				check->child1 = NULL;
-				destroy_node(check);
-				return temp;
+				//case for left child
+				if(check->child1 != NULL) {
+					node_t *temp = check->child1;
+					check->child1 = NULL;
+					destroy_node(check);
+					return temp;
 				
-			//case for right child
+				//case for right child
+				} else {
+					node_t *temp = check->child2;
+					check->child2 = NULL;
+					destroy_node(check);
+					return temp;
+				}
+			
+			//node to be removed has two children
 			} else {
-				node_t *temp = check->child2;
-				check->child2 = NULL;
-				destroy_node(check);
-				return temp;
+				node_t *leaf = find_left_leaf(check->child2);
+				check->value = leaf->value;
+				check->child2 = avl_remove_impl(tree, check->child2, check->value, present);
+				return check;
 			}
 			
-		//node to be removed has two children
-		} else {
-			node_t *leaf = find_left_leaf(check->child2);
-			check->value = leaf->value;
-			check->child2 = avl_remove_impl(check->child2, check->value, present);
-			return check;
-		}
-	}
-	
-	if(value < nodeval) {
-		//left child
-		check->child1 = avl_remove_impl(check->child1, value, present);
-	}
-	
-	if(value > nodeval) {
-		//right child
-		check->child2 = avl_remove_impl(check->child2, value, present);
+			break;
+		case 1:
+			//left child
+			check->child1 = avl_remove_impl(tree, check->child1, value, present);
+			break;
+		case -1:
+			//right child
+			check->child2 = avl_remove_impl(tree, check->child2, value, present);
+			break;
+		default:
+			fprintf(stderr, "Compare function returns invalid value\n");
+			break;
 	}
 	
 	return check;
 }
 
-void avl_remove(tree_t *tree, int value) {
+void avl_remove(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
-	tree->root = avl_remove_impl(tree->root, value, &present);
+	tree->root = avl_remove_impl(tree, tree->root, value, &present);
 	
 	if(present) {
 		tree->num_elements -= 1;
@@ -175,8 +180,16 @@ void avl_remove(tree_t *tree, int value) {
 }
 
 void avl_pop(tree_t *tree) {
+	if(tree->num_elements == 0) {
+		fprintf(stderr, "Cannot pop empty tree\n");
+		return;
+	}
+	
 	bool present = false;
-	avl_remove_impl(tree->root, tree->root->value, &present);
+	
+	avl_remove_impl(tree, tree->root, tree->root->value, &present);
+	
+	tree->num_elements -= 1;
 }
 
 
@@ -200,89 +213,93 @@ int avl_depth(tree_t *tree) {
 }
 
 
-bool avl_present_impl(node_t *check, int value) {
+bool avl_present_impl(tree_t *tree, node_t *check, void *value) {
 	
-	int checkval = check->value;
+	int comp = tree->compare_fp(check->value, value);
 	
-	if(checkval == value) {
-		return true;
-	}
-	
-	if(value < checkval) {
-		if(check->child1 == NULL) {
+	switch(comp) {
+		case 0:
+			return true;
+			break;
+		case 1:
+			if(check->child1 == NULL) {
+				return false;
+			}
+			return avl_present_impl(tree, check->child1, value);
+			break;
+		case -1:
 			return false;
-		}
-		return avl_present_impl(check->child1, value);
+			break;
+		default:
+			fprintf(stderr, "Compare function returns invalid value\n");
+			break;
 	}
 	
-	if(check->child2 == NULL) {
-		return false;
-	}
-	return avl_present_impl(check->child2, value);
+	return avl_present_impl(tree, check->child2, value);
 }
 
-bool avl_present(tree_t *tree, int value) {
+bool avl_present(tree_t *tree, void *value) {
 	if(tree->num_elements == 0) {
 		return false;
 	}
 	
-	return avl_present_impl(tree->root, value);
+	return avl_present_impl(tree, tree->root, value);
 }
 
 
-static void print_tree_inorder(node_t *node) {
+static void print_tree_inorder(tree_t *tree, node_t *node) {
 	if(node == NULL) {
 		printf("NULL\n");
 	}
 	
 	
 	if(node->child1 != NULL) {
-		print_tree_inorder(node->child1);
+		print_tree_inorder(tree, node->child1);
 	}
 	
-	printf("%d\n", node->value);
+	tree->print_fp(node->value);
 	
 	if(node->child2 != NULL) {
-		print_tree_inorder(node->child2);
+		print_tree_inorder(tree, node->child2);
 	}
 	
 	return;
 }
 
-static void print_tree_preorder(node_t *node) {
+static void print_tree_preorder(tree_t *tree, node_t *node) {
 	if(node == NULL) {
 		printf("NULL\n");
 	}
 	
 	
-	printf("%d\n", node->value);
+	tree->print_fp(node->value);
 	
 	if(node->child1 != NULL) {
-		print_tree_preorder(node->child1);
+		print_tree_preorder(tree, node->child1);
 	}
 	
 	if(node->child2 != NULL) {
-		print_tree_preorder(node->child2);
+		print_tree_preorder(tree, node->child2);
 	}
 	
 	return;
 }
 
-static void print_tree_postorder(node_t *node) {
+static void print_tree_postorder(tree_t *tree, node_t *node) {
 	if(node == NULL) {
 		printf("NULL\n");
 	}
 	
 	
 	if(node->child1 != NULL) {
-		print_tree_postorder(node->child1);
+		print_tree_postorder(tree, node->child1);
 	}
 	
 	if(node->child2 != NULL) {
-		print_tree_postorder(node->child2);
+		print_tree_postorder(tree, node->child2);
 	}
 	
-	printf("%d\n", node->value);
+	tree->print_fp(node->value);
 	
 	return;
 }
@@ -304,13 +321,13 @@ void avl_print(tree_t *tree, transversal_e transversal) {
 	
 	switch(transversal) {
 		case inorder:
-			print_tree_inorder(tree->root);
+			print_tree_inorder(tree, tree->root);
 			break;
 		case preorder:
-			print_tree_preorder(tree->root);
+			print_tree_preorder(tree, tree->root);
 			break;
 		case postorder:
-			print_tree_postorder(tree->root);
+			print_tree_postorder(tree, tree->root);
 			break;
 		default:
 			fprintf(stderr, "Invalid transversal in print_tree function\n");
