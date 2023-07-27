@@ -92,12 +92,25 @@ int main(int argc, char *argv[]) {
 	else printf("Value %d not present in tree\n", value);
 	
 	//insert values
-	int insertvalue;
-	for(int i = 0; i < 5; i++) {
-		insertvalue = rand() % upbound;
-		printf("Inserting value %d into tree\n", insertvalue);
-		tree_insert_node(tree, &insertvalue);
-	}
+	int insertvalue1 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue1);
+	tree_insert_node(tree, &insertvalue1);
+	
+	int insertvalue2 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue2);
+	tree_insert_node(tree, &insertvalue2);
+	
+	int insertvalue3 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue3);
+	tree_insert_node(tree, &insertvalue3);
+	
+	int insertvalue4 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue4);
+	tree_insert_node(tree, &insertvalue4);
+	
+	int insertvalue5 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue5);
+	tree_insert_node(tree, &insertvalue5);
 	
 	//print new tree with various orders
 	printf("Tree contents inorder:\n");
@@ -116,11 +129,11 @@ int main(int argc, char *argv[]) {
 	printf("%d elements in tree\n", tree_get_num_elements(tree));
 	
 	//test node present using last inserted value
-	if(tree_node_present(tree, &insertvalue)) {
-		printf("Value %d present in tree\n", insertvalue);
+	if(tree_node_present(tree, &insertvalue5)) {
+		printf("Value %d present in tree\n", insertvalue5);
 	} 
 	else {
-		printf("Value %d not present in tree\n", insertvalue);
+		printf("Value %d not present in tree\n", insertvalue5);
 	}
 	
 	int testval = 101;
@@ -208,11 +221,25 @@ int main(int argc, char *argv[]) {
 	else printf("Value %d not present in heap\n", rootvalue);
 	
 	//insert values
-	for(int i = 0; i < 5; i++) {
-		insertvalue = rand() % upbound;
-		printf("Inserting value %d into heap\n", insertvalue);
-		tree_insert_node(heaptree, &insertvalue);
-	}
+	int insertvalue6 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue6);
+	tree_insert_node(tree, &insertvalue6);
+	
+	int insertvalue7 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue7);
+	tree_insert_node(tree, &insertvalue7);
+	
+	int insertvalue8 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue8);
+	tree_insert_node(tree, &insertvalue8);
+	
+	int insertvalue9 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue9);
+	tree_insert_node(tree, &insertvalue9);
+	
+	int insertvalue10 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue10);
+	tree_insert_node(tree, &insertvalue10);
 	
 	//print new heap
 	printf("Heap contents:\n");
@@ -225,10 +252,10 @@ int main(int argc, char *argv[]) {
 	printf("%d elements in heap\n", tree_get_num_elements(heaptree));
 	
 	//test node present using last inserted value
-	if(tree_node_present(heaptree, &insertvalue)) {
-		printf("Value %d present in heap\n", insertvalue);
+	if(tree_node_present(heaptree, &insertvalue10)) {
+		printf("Value %d present in heap\n", insertvalue10);
 	}
-	else printf("Value %d not present in heap\n", insertvalue);
+	else printf("Value %d not present in heap\n", insertvalue10);
 	
 	//test removing last element
 	removevalue = 10;
@@ -314,11 +341,25 @@ int main(int argc, char *argv[]) {
 	else printf("Value %d not present in tree\n", value);
 	
 	//insert values
-	for(int i = 0; i < 5; i++) {
-		insertvalue = rand() % upbound;
-		printf("Inserting value %d into tree\n", insertvalue);
-		tree_insert_node(avltree, &insertvalue);
-	}
+	int insertvalue11 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue11);
+	tree_insert_node(tree, &insertvalue11);
+	
+	int insertvalue12 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue12);
+	tree_insert_node(tree, &insertvalue12);
+	
+	int insertvalue13 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue13);
+	tree_insert_node(tree, &insertvalue13);
+	
+	int insertvalue14 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue14);
+	tree_insert_node(tree, &insertvalue14);
+	
+	int insertvalue15 = rand() % upbound;
+	printf("Inserting value %d into tree\n", insertvalue15);
+	tree_insert_node(tree, &insertvalue15);
 	
 	//print new tree with various orders
 	printf("Tree contents inorder:\n");
@@ -337,11 +378,11 @@ int main(int argc, char *argv[]) {
 	printf("%d elements in tree\n", tree_get_num_elements(avltree));
 	
 	//test node present using last inserted value
-	if(tree_node_present(avltree, &insertvalue)) {
-		printf("Value %d present in tree\n", insertvalue);
+	if(tree_node_present(avltree, &insertvalue15)) {
+		printf("Value %d present in tree\n", insertvalue15);
 	} 
 	else {
-		printf("Value %d not present in tree\n", insertvalue);
+		printf("Value %d not present in tree\n", insertvalue15);
 	}
 	
 	if(tree_node_present(avltree, &testval)) {

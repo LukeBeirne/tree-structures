@@ -109,8 +109,6 @@ tree_t *heap_create(tree_t *tree, int heap_size) {
 	tree->priv = (heap_priv_t *)malloc(sizeof(heap_priv_t));
 	(GET_PRIV(tree))->heap_size = heap_size;
 	(GET_PRIV(tree))->heap_array = (void **)malloc(heap_size*sizeof(void *));
-	//tree->heap_array = (char *)malloc(heap_size*sizeof(int));
-	//tree->heap_size = heap_size;
 	return tree;
 }
 
@@ -131,9 +129,6 @@ void heap_insert_node(tree_t *tree, void *value) {
 	}
 	
 	(GET_PRIV(tree))->heap_array[tree->num_elements] = value;
-	//tree->heap_array + (tree->num_elements)*tree->type_size
-	//memcpy(tree->heap_array + (tree->num_elements)*tree->type_size, value, tree->type_size);
-	//(tree->heap_array)[tree->num_elements] = value;
 	
 	tree->num_elements += 1;
 	

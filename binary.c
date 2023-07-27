@@ -23,8 +23,7 @@ struct node {
 
 static node_t *create_node(tree_t *tree, void *value) {
 	node_t *node = (node_t *)malloc(sizeof(node_t));
-	memcpy(node->value, value, tree->type_size);
-	//node->value = value;
+	node->value = value;
 	node->child1 = NULL;
 	node->child2 = NULL;
 	return node;
