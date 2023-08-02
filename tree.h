@@ -42,8 +42,8 @@ typedef struct tree tree_t;
 typedef tree_t *(*create_op)(tree_t *, int);
 typedef void (*destroy_op)(tree_t *); //int
 typedef void (*insert_op)(tree_t *, void *); //int
-typedef void (*remove_op)(tree_t *, void *); //void *, return the removed value
-typedef void (*pop_op)(tree_t *); //void *
+typedef void *(*remove_op)(tree_t *, void *); //void *, return the removed value
+typedef void *(*pop_op)(tree_t *);
 typedef int (*depth_op)(tree_t *);
 typedef bool (*present_op)(tree_t *, void *);
 typedef void (*print_op)(tree_t *, transversal_e);
@@ -168,22 +168,22 @@ static inline void tree_insert_node(tree_t *tree, void *value) {
 }
 
 //does nothing if value to be removed does not exist
-static inline void tree_remove_node(tree_t *tree, void *value) {
+static inline void *tree_remove_node(tree_t *tree, void *value) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
+		return NULL;
 	}
 	
-	tree->ops->remove(tree, value);
+	return tree->ops->remove(tree, value);
 }
 
-static inline void tree_pop(tree_t *tree) {
+static inline void *tree_pop(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
+		return NULL;
 	}
 	
-	tree->ops->pop(tree);
+	return tree->ops->pop(tree);
 }
 
 //returns 0 if input tree is NULL

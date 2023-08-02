@@ -138,29 +138,38 @@ void heap_insert_node(tree_t *tree, void *value) {
 	
 }
 
-void heap_pop(tree_t *tree) {
+void *heap_pop(tree_t *tree) {
 	if(tree == NULL) {
 		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
+		return NULL;
 	}
+	
+	void *retval = (GET_PRIV(tree))->heap_array[0];
 	
 	(GET_PRIV(tree))->heap_array[0] = (GET_PRIV(tree))->heap_array[tree->num_elements-1];
 	tree->num_elements -= 1;
 	heapify_down(tree, 0);
 	
+	return retval;
+	
 }
 
-void heap_remove(tree_t *tree, void *value) {
-	if(tree == NULL) {
-		fprintf(stderr, "Tree pointer is NULL\n");
-		return;
-	}
+void *heap_remove(tree_t *tree, void *value) {
 	
+	void *check;
+	for(int i = 0; i < tree->num_elements; i++) {
+		check = (GET_PRIV(tree))->heap_array[i];
+		if(tree->compare_fp(check, value) == 0) {
+			//stuff
+		}
+	}
 	
 	if(tree->num_elements > 0) {
 		tree->num_elements -= 1;
+		return value;
 	}
 	
+	return NULL;
 }
 
 

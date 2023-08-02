@@ -165,7 +165,7 @@ node_t *binary_remove_impl(tree_t *tree, node_t *check, void *value, bool *prese
 	return check;
 }
 
-void binary_remove(tree_t *tree, void *value) {
+void *binary_remove(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
@@ -173,20 +173,27 @@ void binary_remove(tree_t *tree, void *value) {
 	
 	if(present) {
 		tree->num_elements -= 1;
+		return value;
 	}
+	
+	return NULL;
 }
 
-void binary_pop(tree_t *tree) {
+void *binary_pop(tree_t *tree) {
 	if(tree->num_elements == 0) {
 		fprintf(stderr, "Cannot pop empty tree\n");
-		return;
+		return NULL;
 	}
+	
+	void *retval = (GET_PRIV(tree))->value;
 	
 	bool present = false;
 	
 	binary_remove_impl(tree, GET_PRIV(tree), (GET_PRIV(tree))->value, &present);
 	
 	tree->num_elements -= 1;
+	
+	return retval;
 }
 
 
