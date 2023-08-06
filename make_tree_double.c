@@ -52,8 +52,8 @@ int main(int argc, char *argv[]) {
 	
 	//creating trees
 	printf("Creating tree with %f as root\n", value);
-	tree_t *tree = create_tree(binary, sizeof(double), compare_double, print_double, 0);
-	tree_t *emptytree = create_tree(binary, sizeof(double), compare_double, print_double, 0);
+	tree_t *tree = create_tree(binary, compare_double, print_double, 0);
+	tree_t *emptytree = create_tree(binary, compare_double, print_double, 0);
 	
 	//insert root into tree
 	tree_insert_node(tree, &value);
@@ -182,8 +182,8 @@ int main(int argc, char *argv[]) {
 	//creating trees
 	double rootvalue = 10;
 	printf("Creating heap with %f as root\n", rootvalue);
-	tree_t *heaptree = create_tree(heap, sizeof(double), compare_double, print_double, 10);
-	tree_t *emptyheap = create_tree(heap, sizeof(double), compare_double, print_double, 10);
+	tree_t *heaptree = create_tree(heap, compare_double, print_double, 10);
+	tree_t *emptyheap = create_tree(heap, compare_double, print_double, 10);
 	
 	//insert root into tree
 	tree_insert_node(heaptree, &rootvalue);
@@ -302,8 +302,8 @@ int main(int argc, char *argv[]) {
 	
 	//creating trees
 	printf("Creating tree with %f as root\n", value);
-	tree_t *avltree = create_tree(avl, sizeof(double), compare_double, print_double, 0);
-	tree_t *emptyavltree = create_tree(avl, sizeof(double), compare_double, print_double, 0);
+	tree_t *avltree = create_tree(avl, compare_double, print_double, 0);
+	tree_t *emptyavltree = create_tree(avl, compare_double, print_double, 0);
 	
 	//insert root into tree
 	tree_insert_node(avltree, &value);

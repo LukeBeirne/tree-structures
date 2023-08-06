@@ -14,6 +14,7 @@ struct node {
 	void *value;
 	node_t *child1;
 	node_t *child2;
+	//int depth;
 };
 
 
@@ -51,9 +52,10 @@ static void destroy_node(node_t *node) {
  * avl tree function definitions
  */
 
-void avl_destroy(tree_t *tree) {
+int avl_destroy(tree_t *tree) {
 	//destroy_node function traverses through tree to destroy each node
 	destroy_node(GET_PRIV(tree));
+	return 0;
 }
 
 
@@ -83,7 +85,7 @@ static node_t *avl_insert_impl(tree_t *tree, node_t *check, void *value, bool *p
 	return check;
 }
 
-void avl_insert(tree_t *tree, void *value) {
+int avl_insert(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
@@ -91,7 +93,10 @@ void avl_insert(tree_t *tree, void *value) {
 	
 	if(!present) {
 		tree->num_elements += 1;
+		return 0;
 	}
+	
+	return 2;
 }
 
 

@@ -112,20 +112,27 @@ tree_t *heap_create(tree_t *tree, int heap_size) {
 	return tree;
 }
 
-void heap_destroy(tree_t *tree) {
+int heap_destroy(tree_t *tree) {
+	if((GET_PRIV(tree))->heap_array == NULL) {
+		fprintf(stderr, "Heap array pointer is NULL\n");
+		return 2;
+	}
+	
 	free((GET_PRIV(tree))->heap_array);
+	
+	return 0;
 }
 
 
-void heap_insert_node(tree_t *tree, void *value) {
+int heap_insert_node(tree_t *tree, void *value) {
 	if((GET_PRIV(tree))->heap_array == NULL) {
 		fprintf(stderr, "Heap array pointer is NULL\n");
-		return;
+		return 2;
 	}
 	
 	if(tree->num_elements == (GET_PRIV(tree))->heap_size) {
 		fprintf(stderr, "Heap at capacity, returning without insert\n");
-		return;
+		return 3;
 	}
 	
 	(GET_PRIV(tree))->heap_array[tree->num_elements] = value;
@@ -136,6 +143,7 @@ void heap_insert_node(tree_t *tree, void *value) {
 		heapify_up(tree, tree->num_elements-1);
 	}
 	
+	return 0;	
 }
 
 void *heap_pop(tree_t *tree) {

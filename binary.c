@@ -51,9 +51,10 @@ static void destroy_node(node_t *node) {
  * binary tree function definitions
  */
 
-void binary_destroy(tree_t *tree) {
+int binary_destroy(tree_t *tree) {
 	//destroy_node function traverses through tree to destroy each node
 	destroy_node(GET_PRIV(tree));
+	return 0;
 }
 
 
@@ -83,7 +84,7 @@ static node_t *binary_insert_impl(tree_t *tree, node_t *check, void *value, bool
 	return check;
 }
 
-void binary_insert(tree_t *tree, void *value) {
+int binary_insert(tree_t *tree, void *value) {
 	
 	bool present = false;
 	
@@ -91,7 +92,10 @@ void binary_insert(tree_t *tree, void *value) {
 	
 	if(!present) {
 		tree->num_elements += 1;
+		return 0;
 	}
+	
+	return 2;
 }
 
 
