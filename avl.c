@@ -52,19 +52,21 @@ static void destroy_node(node_t *node) {
  * avl tree function definitions
  */
 
-void redepth_impl(node_t *node) {
+void rebalance_impl(node_t *node) {
 	if(node == NULL) {
 		return;
 	}
 	
-	node->balance = avl_depth_impl(node);
+	if(abs(node->balance)) > 1) {
+		//compute rebalance
+	}
 	
-	redepth_impl(node->child1);
-	redepth_impl(node->child2);
+	rebalance_impl(node->child1);
+	rebalance_impl(node->child2);
 	
 }
 
-void redepth(tree_t *tree) {
+void rebalance(tree_t *tree) {
 	redepth_impl(GET_PRIV(tree));
 }
 
@@ -120,6 +122,8 @@ int avl_insert(tree_t *tree, void *value) {
 		tree->num_elements += 1;
 		return 0;
 	}
+	
+	rebalance(tree);
 	
 	return 2;
 }
