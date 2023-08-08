@@ -14,7 +14,7 @@ struct node {
 	void *value;
 	node_t *child1;
 	node_t *child2;
-	//int depth;
+	int balance;
 };
 
 
@@ -52,6 +52,23 @@ static void destroy_node(node_t *node) {
  * avl tree function definitions
  */
 
+void redepth_impl(node_t *node) {
+	if(node == NULL) {
+		return;
+	}
+	
+	node->balance = avl_depth_impl(node);
+	
+	redepth_impl(node->child1);
+	redepth_impl(node->child2);
+	
+}
+
+void redepth(tree_t *tree) {
+	redepth_impl(GET_PRIV(tree));
+}
+
+
 int avl_destroy(tree_t *tree) {
 	//destroy_node function traverses through tree to destroy each node
 	destroy_node(GET_PRIV(tree));
@@ -73,9 +90,17 @@ static node_t *avl_insert_impl(tree_t *tree, node_t *check, void *value, bool *p
 			break;
 		case 1:
 			check->child1 = avl_insert_impl(tree, check->child1, value, present);
+			
+			if(!present) {
+				check->balance += 1;
+			}
 			break;
 		case -1:
 			check->child2 = avl_insert_impl(tree, check->child2, value, present);
+			
+			if(!present) {
+				check->balance -= 1;
+			}
 			break;
 		default:
 			fprintf(stderr, "Compare function returns invalid value\n");
